@@ -43,7 +43,15 @@ public static class Extensions
         //var myKey = builder.Configuration["MyKey"];
         //builder.Services.AddSingleton<IService3>(sp => new Service3(myKey));
 
-        builder.Services.AddScoped(sp => new EventBusCatalogItemCreated("Queue.CatalogItemCreated", "Exchange.CatalogItemCreated"));
+        builder.Services.AddScoped(sp =>
+            new EventBusCatalogItemCreated(
+                queueName: "Queue.CatalogItemCreated",
+                exchangeName: "Exchange.CatalogItemCreated",
+                hostName: builder.Configuration["RabbitMq:Hostname"] ?? "localhost",
+                userName: "user",
+                password: "mypass",
+                port:5672)
+            );
     }
 }
 

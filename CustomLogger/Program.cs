@@ -10,14 +10,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        var client = new EventBusConsumer()
-        {
-            QueueName = "Queue.Test",
-            Exchange = "Exchange.Test"
-        };
+        var client = new EventBusConsumer("localhost", "user", "mypass", 5672);
 
-        client.Subscribe("Queue.Test", "Exchange.Test");
-
+        client.Subscribe("Queue.CatalogItemCreated", "Exchange.CatalogItemCreated");
 
         Console.WriteLine($"Press button to unsibscribe - {client.ConsumerTag}");
 

@@ -8,21 +8,17 @@ using RabbitMQ.Client.Events;
 
 namespace EventBus;
 
-public abstract class EventBusPublisher : IEventBusPublisher, IDisposable
+public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, IDisposable
 {
-    private IModel? _channel;
-    private readonly string _queueName;
-    private readonly string _exchangeName;
-
-    public EventBusPublisher(string queueName, string exchangeName)
+    public EventBusPublisher(string hostName, string userName, string password, int port)
     {
-        _queueName = queueName;
-        _exchangeName = exchangeName;
+        Initialize(hostName, userName, password, port);
     }
 
     public virtual void Publish(object objectToSend)
     {
-        Initialize();
+        if (_exchangeName is null)
+            throw new Exception("No exchange specified");
 
         byte[] messagebuffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(objectToSend));
         _channel.BasicPublish(
@@ -36,33 +32,5 @@ public abstract class EventBusPublisher : IEventBusPublisher, IDisposable
     {
         Console.WriteLine("Disposed");
     }
-
-    private void Initialize()
-    {
-        if (_channel is null)
-        {
-            var factory = new ConnectionFactory { HostName = "rabbitmq-container", UserName = "user", Password = "mypass", Port = 5672};
-            var connection = factory.CreateConnection();
-            _channel = connection.CreateModel();
-
-            _channel.QueueDeclare(
-                queue: _queueName,
-                durable: true,
-                exclusive: false
-                );
-
-            _channel.ExchangeDeclare(
-                exchange: _exchangeName,
-                type: ExchangeType.Headers
-                );
-
-            _channel.QueueBind(
-                queue: _queueName,
-                exchange: _exchangeName,
-                routingKey: string.Empty
-                );
-        }
-    }
-   
 }
 
