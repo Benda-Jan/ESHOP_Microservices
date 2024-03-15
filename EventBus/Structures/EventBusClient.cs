@@ -1,8 +1,6 @@
-﻿using System;
-using RabbitMQ.Client;
-using System.Threading.Channels;
+﻿using RabbitMQ.Client;
 
-namespace EventBus;
+namespace EventBus.Structures;
 
 public abstract class EventBusClient
 {

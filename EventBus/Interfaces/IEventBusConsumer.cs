@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EventBus;
+﻿namespace EventBus.Interfaces;
 
 public interface IEventBusConsumer
 {

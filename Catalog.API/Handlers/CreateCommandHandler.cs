@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using EventBus;
 using Catalog.API.EventsHandling;
+using System.Text.Json;
 
 namespace Catalog.API.Handlers
 {
@@ -52,7 +53,7 @@ namespace Catalog.API.Handlers
             await _catalogContext.AddAsync(catalogItem);
             await _catalogContext.SaveChangesAsync();
 
-            _eventBusPublisher.Publish(catalogItem);
+            _eventBusPublisher.Publish(JsonSerializer.Serialize(catalogItem));
 
             return catalogItem;
         }

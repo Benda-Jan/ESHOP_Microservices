@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using EventBus.Interfaces;
+using EventBus.Exceptions;
 
-namespace EventBus;
+namespace EventBus.Structures;
 
 public class EventBusConsumer : EventBusClient, IEventBusConsumer
 {
@@ -20,8 +18,6 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
 
     public void Subscribe(string queueName, string exchange)
     {
-        _exchangeName = exchange;
-
         AddQueue(exchange);
 
         var consumer = new EventingBasicConsumer(_channel);
@@ -42,10 +38,14 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
 
     public void Unsubscribe()
     {
-        if (ConsumerTag is null || _queueName is null || _exchangeName is null)
-            throw new Exception("No queoe bounded yet");
+        if (ConsumerTag is null || _queueName is null)
+            throw new NotSubscribedException("Not subscribed to any queue yet");
 
-        _channel.BasicCancel(ConsumerTag);
+        if (_exchangeName is null)
+            throw new ExchangeUndeclaredException("No exchange specified");
+
+        if (_channel is null)
+            throw new ChannelNotCreatedException("No channel to cancel");
 
         _channel.QueueUnbind(
             queue: _queueName,
@@ -53,15 +53,18 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
             routingKey: string.Empty
             );
 
+        _channel.BasicCancel(ConsumerTag);
+
         _channel = null;
         _queueName = string.Empty;
         _exchangeName = string.Empty;
+        ConsumerTag = string.Empty;
     }
 
     protected void AddQueue(string exchangeName)
     {
         if (_channel is null)
-            throw new Exception("Client not initialized yer");
+            throw new ChannelNotCreatedException("Channel not created yet");
 
         _exchangeName = exchangeName;
         _queueName = _channel.QueueDeclare().QueueName;

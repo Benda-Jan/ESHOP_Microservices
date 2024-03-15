@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
+using EventBus.Interfaces;
+using EventBus.Exceptions;
 
-namespace EventBus;
+namespace EventBus.Structures;
 
 public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, IDisposable
 {
@@ -15,12 +13,12 @@ public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, ID
         Initialize(hostName, userName, password, port);
     }
 
-    public virtual void Publish(object objectToSend)
+    public virtual void Publish(string message)
     {
         if (_exchangeName is null)
-            throw new Exception("No exchange specified");
+            throw new ExchangeUndeclaredException("No exchange specified");
 
-        byte[] messagebuffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(objectToSend));
+        byte[] messagebuffer = Encoding.UTF8.GetBytes(message);
         _channel.BasicPublish(
             exchange: _exchangeName,
             routingKey: string.Empty,
@@ -30,7 +28,7 @@ public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, ID
 
     public void Dispose()
     {
-        Console.WriteLine("Disposed");
+        // ??
     }
 }
 

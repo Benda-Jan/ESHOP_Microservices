@@ -45,11 +45,10 @@ public static class Extensions
 
         builder.Services.AddScoped(sp =>
             new EventBusCatalogItemCreated(
-                queueName: "Queue.CatalogItemCreated",
                 exchangeName: "Exchange.CatalogItemCreated",
                 hostName: builder.Configuration["RabbitMq:Hostname"] ?? "localhost",
-                userName: "user",
-                password: "mypass",
+                userName: builder.Configuration["RabbitMq:Username"] ?? "user",
+                password: builder.Configuration["RabbitMq:Password"] ?? "",
                 port:5672)
             );
     }
