@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1706.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "Catalog.API\Catalog.API.csproj", "{3D43E634-58AF-411B-A3E2-289059D232F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.API", "Basket.API\Basket.API.csproj", "{C0A5B587-4244-44A7-A440-3348EBB7F7C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Entities", "Catalog.Entities\Catalog.Entities.csproj", "{FABA24DE-777B-4D51-951B-98F7CA43D247}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Infrastructure", "Catalog.Infrastructure\Catalog.Infrastructure.csproj", "{8C168165-D0FC-45B4-BD66-BE0BBEA86ABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "EventBus\EventBus.csproj", "{38C238A2-B2D8-48BD-A627-897000F46537}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomLogger", "CustomLogger\CustomLogger.csproj", "{D1B2492B-B012-4EFF-9085-9751B0527BB1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D43E634-58AF-411B-A3E2-289059D232F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D43E634-58AF-411B-A3E2-289059D232F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D43E634-58AF-411B-A3E2-289059D232F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D43E634-58AF-411B-A3E2-289059D232F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0A5B587-4244-44A7-A440-3348EBB7F7C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0A5B587-4244-44A7-A440-3348EBB7F7C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0A5B587-4244-44A7-A440-3348EBB7F7C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0A5B587-4244-44A7-A440-3348EBB7F7C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FABA24DE-777B-4D51-951B-98F7CA43D247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FABA24DE-777B-4D51-951B-98F7CA43D247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FABA24DE-777B-4D51-951B-98F7CA43D247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FABA24DE-777B-4D51-951B-98F7CA43D247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C168165-D0FC-45B4-BD66-BE0BBEA86ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C168165-D0FC-45B4-BD66-BE0BBEA86ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C168165-D0FC-45B4-BD66-BE0BBEA86ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C168165-D0FC-45B4-BD66-BE0BBEA86ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C238A2-B2D8-48BD-A627-897000F46537}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C238A2-B2D8-48BD-A627-897000F46537}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38C238A2-B2D8-48BD-A627-897000F46537}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38C238A2-B2D8-48BD-A627-897000F46537}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B2492B-B012-4EFF-9085-9751B0527BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B2492B-B012-4EFF-9085-9751B0527BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B2492B-B012-4EFF-9085-9751B0527BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B2492B-B012-4EFF-9085-9751B0527BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6991ECCC-529D-4A99-9A3B-36C3065D2816}
+	EndGlobalSection
+EndGlobal
