@@ -37,8 +37,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="EventsHandling\" />
+    <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EventsHandling\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

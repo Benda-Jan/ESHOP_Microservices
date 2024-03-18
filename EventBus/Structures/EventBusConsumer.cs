@@ -16,7 +16,7 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
         Initialize(hostName, userName, password, port);
     }
 
-    public void Subscribe(string queueName, string exchange)
+    public virtual void Subscribe(string queueName, string exchange)
     {
         AddQueue(exchange);
 
@@ -26,7 +26,7 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
         {
             var text = Encoding.UTF8.GetString(b.Body.ToArray());
             //var messagebuffer = JsonSerializer.Serialize(objectToSend)); /
-            Console.WriteLine($"Received '{text}' from '{b.ConsumerTag}'");
+            Console.WriteLine($"Received '{text}'");
         };
 
         ConsumerTag = _channel.BasicConsume(

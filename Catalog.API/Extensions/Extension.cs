@@ -7,6 +7,8 @@ using Npgsql;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Catalog.API.EventsHandling;
 using EventBus;
+using EventBus.Interfaces;
+using Catalog.API.Services;
 
 namespace Catalog.API.Extensions;
 
@@ -43,14 +45,20 @@ public static class Extensions
         //var myKey = builder.Configuration["MyKey"];
         //builder.Services.AddSingleton<IService3>(sp => new Service3(myKey));
 
-        builder.Services.AddScoped(sp =>
+        builder.Services.AddScoped<EventBusCatalogItemCreated>(sp =>
             new EventBusCatalogItemCreated(
-                exchangeName: "Exchange.CatalogItemCreated",
-                hostName: builder.Configuration["RabbitMq:Hostname"] ?? "localhost",
-                userName: builder.Configuration["RabbitMq:Username"] ?? "user",
-                password: builder.Configuration["RabbitMq:Password"] ?? "",
+                hostName: builder.Configuration["RabbitMQ:Hostname"] ?? "localhost",
+                userName: builder.Configuration["RabbitMQ:Username"] ?? "user",
+                password: builder.Configuration["RabbitMQ:Password"] ?? "",
                 port:5672)
             );
+
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = "localhost:6371";
+        });
+
+        builder.Services.AddTransient<RedisCacheService>();
     }
 }
 

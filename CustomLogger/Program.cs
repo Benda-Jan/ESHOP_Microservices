@@ -13,7 +13,7 @@ class Program
         Console.WriteLine($"Press button to unsibscribe - {client.ConsumerTag}");
 
         Console.ReadKey();
-        Console.WriteLine("Unsibscribed");
+        Console.WriteLine("Unsubscribed");
 
         client.Unsubscribe();
 

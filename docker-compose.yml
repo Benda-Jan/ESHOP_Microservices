@@ -36,4 +36,12 @@ services:
         - '5672:5672'
         - '15672:15672'
 
+  catalog-redis-cache:
+    image: redis:7.2.4-alpine
+    command: "redis-server"
+    ports:
+      - 6371:6379
+    restart: always
+
+
     

@@ -8,9 +8,10 @@ namespace EventBus.Structures;
 
 public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, IDisposable
 {
-    public EventBusPublisher(string hostName, string userName, string password, int port)
+    public EventBusPublisher(string exchangeName, string hostName, string userName, string password, int port)
     {
         Initialize(hostName, userName, password, port);
+        AddExchange(exchangeName);
     }
 
     public virtual void Publish(string message)

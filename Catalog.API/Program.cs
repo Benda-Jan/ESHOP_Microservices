@@ -1,11 +1,6 @@
 ﻿using Catalog.API.Extensions;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Data;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Npgsql;
-using System.Reflection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
 
@@ -21,29 +16,26 @@ public class Program
 
         var app = builder.Build();
 
-        app.ApplyMigrations();
-
-        using (var scope = app.Services.CreateScope())
-        {
-            
-
-            var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<CatalogContext>();
-
-            var seeder = new CatalogContextSeeder(context);
-            await seeder.SeedBrands();
-            await seeder.SeedTypes();
-
-            
-        }
-
         // Configure the HTTP request pipeline.
 
-        app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
+        if (app.Environment.IsEnvironment("Development") || app.Environment.IsEnvironment("Docker"))
+        {
+            app.ApplyMigrations();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<CatalogContext>();
+
+                var seeder = new CatalogContextSeeder(context);
+                await seeder.SeedBrands();
+                await seeder.SeedTypes();
+            }
+
+            app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
+        }
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 

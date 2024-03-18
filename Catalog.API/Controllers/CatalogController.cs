@@ -8,6 +8,7 @@ using MediatR;
 using Catalog.API.Queries;
 using Catalog.API.Commands;
 using EventBus;
+using Catalog.API.Services;
 
 namespace Catalog.API.Controllers;
 
