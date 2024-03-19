@@ -10,9 +10,9 @@ namespace Catalog.API.Handlers;
 public class GetItemByIdHandler : IRequestHandler<GetItemByIdQuery, CatalogItem?>
 {
     private readonly CatalogContext _catalogContext;
-    private readonly RedisCacheService _cache;
+    private readonly ICacheService _cache;
 
-    public GetItemByIdHandler(CatalogContext catalogContext, RedisCacheService cache)
+    public GetItemByIdHandler(CatalogContext catalogContext, ICacheService cache)
     {
         _catalogContext = catalogContext;
         _cache = cache;

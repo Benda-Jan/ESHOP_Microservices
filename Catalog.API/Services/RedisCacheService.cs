@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Catalog.API.Services;
 
-public class RedisCacheService
+public class RedisCacheService : ICacheService
 {
 	private readonly IDistributedCache _cache;
 
@@ -13,14 +13,19 @@ public class RedisCacheService
         _cache = cache;
     }
 
-    public T GetCacheData<T>(string key)
+    public T? GetCacheData<T>(string key)
     {
         var jsonData = _cache.GetString(key);
 
-        if (jsonData == null)
+        if (jsonData is null)
             return default;
 
         return JsonSerializer.Deserialize<T>(jsonData);
+    }
+
+    public void RemoveData(string key)
+    {
+        throw new NotImplementedException();
     }
 
     public void SetCachedData<T>(string key, T data, TimeSpan cacheDuration)
