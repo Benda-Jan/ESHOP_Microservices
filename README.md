@@ -2,9 +2,10 @@
 
 Contains:
  - PostgreSQL Database: ORM principle
- - Catalog.API: REST Api, CQRS concept (MediatR), CRUD
+ - Catalog.API: REST Api, CQRS concept (MediatR), CRUD, Redis Cache
  - EventBus: RabbitMQ
- - Basket.API: qRPC Api (not properly tested yet)
+ - Identity.API: JWT Authentication
+ - Ocelot Gateway: JWT Authentication Middleware
 
 TODO:
  - GraphQL API
