@@ -1,8 +1,9 @@
 ﻿
-using ApiGateway.Extensions;
+using JwtLibrary;
 using AuthorizationMiddleware;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Values;
 
 namespace ApiGateway;
 
@@ -21,7 +22,9 @@ public class Program
         builder.Configuration.AddJsonFile("Ocelot.json", optional: false, reloadOnChange: true);
         builder.Services.AddOcelot(builder.Configuration);
 
-        builder.Services.AddJwtExtension(builder.Configuration);
+        builder.Services.AddJwtAuthentication(builder.Configuration);
+
+        builder.Services.AddTransient<JwtMiddleware>();
 
         var app = builder.Build();
 

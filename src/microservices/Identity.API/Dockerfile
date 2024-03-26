@@ -6,13 +6,14 @@ EXPOSE 5261
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Publish
 WORKDIR /src
-COPY Identity.API/*.csproj .
-COPY Identity.Entities/*.csproj .
-COPY Identity.Infrastructure/*.csproj .
+COPY src/microservices/Identity.API/*.csproj .
+COPY src/microservices/Identity.Entities/*.csproj .
+COPY src/microservices/Identity.Infrastructure/*.csproj .
+COPY src/libraries/JwtLibrary/*.csproj .
 RUN dotnet restore Identity.API.csproj
 COPY . .
-WORKDIR /src/Identity.API
-RUN dotnet publish "Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app
+WORKDIR /src
+RUN dotnet publish "src/microservices/Identity.API/Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app
 
 FROM base AS final
 WORKDIR /app

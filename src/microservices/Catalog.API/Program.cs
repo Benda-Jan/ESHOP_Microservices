@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Catalog.API.EventsHandling;
 using Catalog.API.Services;
+using JwtLibrary;
 
 namespace Catalog.API;
 
@@ -65,7 +66,7 @@ public class Program
 
         builder.Services.AddContextExtension(builder.Configuration);
 
-        builder.Services.AddJwtExtension(builder.Configuration);
+        builder.Services.AddJwtAuthentication(builder.Configuration);
 
         var app = builder.Build();
 
@@ -87,7 +88,6 @@ public class Program
             app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
         }
-
 
         app.UseAuthentication();
 

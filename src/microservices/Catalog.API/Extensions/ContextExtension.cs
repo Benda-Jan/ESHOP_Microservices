@@ -11,6 +11,7 @@ public static class ContextExtension
 {
 	public static void AddContextExtension(this IServiceCollection services, IConfiguration configuration)
 	{
+        
         var connectionString = configuration["PostgreSql:ConnectionString"];
         var dbPassword = configuration["PostgreSql:DbPassword"];
         var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString) { Password = dbPassword };

@@ -10,7 +10,7 @@ COPY src/microservices/Catalog.API/*.csproj .
 COPY src/microservices/Catalog.Entities/*.csproj .
 COPY src/microservices/Catalog.Infrastructure/*.csproj .
 COPY src/microservices/EventBus/*.csproj .
-COPY src/middlewares/AuthorizationMiddleware/*.csproj .
+COPY src/libraries/JwtLibrary/*.csproj .
 RUN dotnet restore Catalog.API.csproj
 COPY . .
 WORKDIR /src

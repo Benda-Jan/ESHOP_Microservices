@@ -26,7 +26,7 @@
     },
     "Docker": {
       "commandName": "Docker",
-      "launchUrl": "http://0.0.0.0:5136/swagger",
+      "launchUrl": "http://0.0.0.0:5136",
       "environmentVariables": {
         "ASPNETCORE_HTTP_PORTS": "5136",
         "ASPNETCORE_ENVIRONMENT": "Docker"

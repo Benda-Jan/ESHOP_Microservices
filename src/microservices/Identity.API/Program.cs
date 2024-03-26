@@ -1,4 +1,5 @@
 ﻿using Identity.API.Extensions;
+using JwtLibrary;
 
 namespace Identity.API;
 
@@ -17,18 +18,16 @@ public class Program
 
         builder.Services.AddContextExtension(builder.Configuration);
 
-        builder.Services.AddJwtExtension(builder.Configuration);
+        builder.Services.AddJwtAuthentication(builder.Configuration);
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (app.Environment.IsEnvironment("Development") || app.Environment.IsEnvironment("Docker"))
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        app.UseHttpsRedirection();
 
         app.UseRouting();
 

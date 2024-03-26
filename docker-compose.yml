@@ -7,7 +7,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://0.0.0.0:5136
       - ASPNETCORE_HTTP_PORTS=5136
-    image: catalog.api
+    depends_on:
+        - catalog-database
+        - catalog-redis-cache
+        - rabbitmq-container
+    image: catalog-api
     container_name: catalog-api
     ports:
       - "5136:5136"
@@ -43,6 +47,19 @@ services:
         - '5672:5672'
         - '15672:15672'
 
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://0.0.0.0:5261
+      - ASPNETCORE_HTTP_PORTS=5261
+    depends_on:
+        - identity-database
+    image: identity-api
+    container_name: identity-api
+    ports:
+      - "5261:5261"
+      - "5262:5262"
+
   identity-database:
     image: postgres:latest
     container_name: identity-database
@@ -56,4 +73,16 @@ services:
       - ./.containers/user-db:/var/lib/postgressql/data
     command: -p 5433
 
-    
+  gateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://0.0.0.0:5003
+      - ASPNETCORE_HTTP_PORTS=5003
+    build:
+      context: .
+      dockerfile: src/gateways/ApiGateway/Dockerfile
+    image: gateway
+    container_name: gateway
+    ports:
+      - "5003:5003"
+      - "5004:5004"
