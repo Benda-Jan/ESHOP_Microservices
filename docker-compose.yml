@@ -78,11 +78,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://0.0.0.0:5003
       - ASPNETCORE_HTTP_PORTS=5003
-    build:
-      context: .
-      dockerfile: src/gateways/ApiGateway/Dockerfile
     image: gateway
     container_name: gateway
     ports:
       - "5003:5003"
-      - "5004:5004"

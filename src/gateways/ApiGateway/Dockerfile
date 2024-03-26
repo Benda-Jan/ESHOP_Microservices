@@ -1,23 +1,19 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-preview AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 5003
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Publish
 WORKDIR /src
-COPY ["src/gateways/ApiGateway/ApiGateway.csproj", "src/gateways/ApiGateway/"]
-COPY ["src/middlewares/AuthorizationMiddleware/AuthorizationMiddleware.csproj", "src/middlewares/AuthorizationMiddleware/"]
-COPY ["src/libraries/JwtLibrary/JwtLibrary.csproj", "src/libraries/JwtLibrary/"]
-RUN dotnet restore "src/gateways/ApiGateway/ApiGateway.csproj"
+COPY src/gateways/ApiGateway/*.csproj .
+COPY src/libraries/JwtLibrary/*.csproj .
+RUN dotnet restore ApiGateway.csproj
 COPY . .
-WORKDIR "/src/src/gateways/ApiGateway"
-RUN dotnet build "ApiGateway.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "ApiGateway.csproj" -c Release -o /app/publish /p:UseAppHost=false
+WORKDIR /src
+RUN dotnet publish "src/gateways/ApiGateway/ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app .
 ENTRYPOINT ["dotnet", "ApiGateway.dll"]

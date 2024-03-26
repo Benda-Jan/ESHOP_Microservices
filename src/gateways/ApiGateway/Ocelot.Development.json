@@ -1,0 +1,120 @@
+﻿{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5003"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/items",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/Catalog/items",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/items/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/Catalog/items/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/items/brand/{brandName}",
+      "UpstreamHttpMethos": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/Catalog/items/brand/{brandName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/items/type/{typeName}",
+      "UpstreamHttpMethos": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/Catalog/items/type/{typeName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/brands",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/Catalog/brands",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/types",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/Catalog/types",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/item",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/v1/Catalog",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5136
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/login",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/v1/Identity/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5261
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/register",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/v1/Identity/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5261
+        }
+      ]
+    }
+  ]
+}
+

@@ -19,7 +19,8 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Configuration.AddJsonFile("Ocelot.json", optional: false, reloadOnChange: true);
+        builder.Configuration.AddJsonFile("Ocelot.Development.json", optional: false, reloadOnChange: true);
+        builder.Configuration.AddJsonFile("Ocelot.Docker.json", optional: false, reloadOnChange: true);
         builder.Services.AddOcelot(builder.Configuration);
 
         builder.Services.AddJwtAuthentication(builder.Configuration);
