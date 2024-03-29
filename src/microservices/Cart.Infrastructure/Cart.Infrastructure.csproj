@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cart.Entities\Cart.Entities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Data\" />
   </ItemGroup>
   <ItemGroup>
@@ -19,9 +22,5 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Catalog.Entities\Catalog.Entities.csproj" />
   </ItemGroup>
 </Project>

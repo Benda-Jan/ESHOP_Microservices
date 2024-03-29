@@ -24,7 +24,7 @@ public static class ContextExtension
             .AddNpgSql(
             connectionString: connectionString,
             healthQuery: "SELECT 1",
-            name: "NpgSqlHealtCheck",
+            name: "CatalogContextHelathCheck",
             failureStatus: HealthStatus.Unhealthy,
             tags: new[] { "sql", "npgsql", "healthchecks" });
     }

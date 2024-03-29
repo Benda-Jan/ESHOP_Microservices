@@ -4,7 +4,7 @@
   },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/gateway/items",
+      "UpstreamPathTemplate": "/gateway/catalog/items",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamPathTemplate": "/v1/Catalog/items",
       "DownstreamScheme": "http",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/items/{id}",
+      "UpstreamPathTemplate": "/gateway/catalog/items/{id}",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamPathTemplate": "/v1/Catalog/items/{id}",
       "DownstreamScheme": "http",
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/items/brand/{brandName}",
+      "UpstreamPathTemplate": "/gateway/catalog/items/brand/{brandName}",
       "UpstreamHttpMethos": [ "Get" ],
       "DownstreamPathTemplate": "/v1/Catalog/items/brand/{brandName}",
       "DownstreamScheme": "http",
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/items/type/{typeName}",
+      "UpstreamPathTemplate": "/gateway/catalog/items/type/{typeName}",
       "UpstreamHttpMethos": [ "Get" ],
       "DownstreamPathTemplate": "/v1/Catalog/items/type/{typeName}",
       "DownstreamScheme": "http",
@@ -76,7 +76,7 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/item",
+      "UpstreamPathTemplate": "/gateway/catalog/item",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamPathTemplate": "/v1/Catalog",
       "DownstreamScheme": "http",
@@ -114,6 +114,70 @@
           "Port": 5261
         }
       ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/cart/user/{userId}/items",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/v1/cart/user/{userId}/items",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cart-api",
+          "Port": 5264
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/cart/user/{userId}/item",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/v1/cart/user/{userId}/item",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cart-api",
+          "Port": 5264
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/cart/user/{userId}/item",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/v1/cart/user/{userId}/item",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cart-api",
+          "Port": 5264
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/cart/user/{userId}/item/{itemId}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "DownstreamPathTemplate": "/v1/cart/user/{userId}/item/{itemId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cart-api",
+          "Port": 5264
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
     }
   ]
 }

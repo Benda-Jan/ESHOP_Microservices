@@ -82,3 +82,29 @@ services:
     container_name: gateway
     ports:
       - "5003:5003"
+
+  cart-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://0.0.0.0:5264
+      - ASPNETCORE_HTTP_PORTS=5264
+    depends_on:
+        - cart-database
+    image: cart-api
+    container_name: cart-api
+    ports:
+      - "5264:5264"
+      - "5265:5265"
+
+  cart-database:
+    image: postgres:latest
+    container_name: cart-database
+    ports:
+      - 5434:5434
+    environment:
+      - POSTGRES_DB=CartContext
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pwd
+    volumes:
+      - ./.containers/cart-db:/var/lib/postgressql/data
+    command: -p 5434
