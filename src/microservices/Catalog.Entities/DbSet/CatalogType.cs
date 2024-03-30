@@ -6,7 +6,7 @@ public class CatalogType : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
 
-    public static implicit operator CatalogType(string name) => new CatalogType { Name = name };
+    public static implicit operator CatalogType(string name) => new CatalogType { Name = name, Id = Guid.NewGuid().ToString() };
 
 }
 

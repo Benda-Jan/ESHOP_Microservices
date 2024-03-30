@@ -114,5 +114,37 @@ public class CatalogController : Controller
 
         return CreatedAtAction(nameof(GetItemById), new { result.Id }, result);
     }
+
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult> UpdateItem(string itemId, CatalogItemInputDto input)
+    {
+        if (!ModelState.IsValid)
+            throw new BadHttpRequestException("Input model not complete");
+
+        var command = new UpdateItemCommand(itemId, input);
+        var result = await _mediator.Send(command);
+
+        if (result)
+            return Ok();
+        else
+            throw new BadHttpRequestException("Item not updated");
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<ActionResult> DeleteItem(string itemId)
+    {
+        if(!ModelState.IsValid)
+            throw new BadHttpRequestException("Input model not complete");
+
+        var command = new DeleteItemCommand(itemId);
+        var result = await _mediator.Send(command);
+
+        if (result is not null)
+            return Ok();
+        else
+            throw new BadHttpRequestException("Itemnot found");
+    }
 }
 

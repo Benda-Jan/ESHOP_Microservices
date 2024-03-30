@@ -10,22 +10,22 @@ using System.Text.Json;
 
 namespace Catalog.API.Handlers
 {
-	public class CreateCommandHandler : IRequestHandler<CreateItemCommand, CatalogItem>
+	public class UpdateCommandHandler : IRequestHandler<UpdateItemCommand, bool>
 	{
         private readonly CatalogContext _catalogContext;
-        private readonly EventBusCatalogItemCreated _eventBusPublisher;
+        private readonly EventBusCatalogItemUpdated _eventBusPublisher;
 
-        public CreateCommandHandler(CatalogContext catalogContext, EventBusCatalogItemCreated eventBusPublisher)
+        public UpdateCommandHandler(CatalogContext catalogContext, EventBusCatalogItemUpdated eventBusPublisher)
         {
             _catalogContext = catalogContext;
             _eventBusPublisher = eventBusPublisher;
         }
 
-        public async Task<CatalogItem> Handle(CreateItemCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
         {
             var alreadyExists = await _catalogContext.CatalogItems.AnyAsync(x => x.Name == request.InputItem.Name);
-            if (alreadyExists)
-                throw new BadHttpRequestException("Catalog item already exists");
+            if (!alreadyExists)
+                throw new BadHttpRequestException("Catalog item does not exist");
 
             var catalogType = await _catalogContext.CatalogTypes.Where(x => x.Name == request.InputItem.CatalogTypeName).FirstOrDefaultAsync()
                 ?? throw new BadHttpRequestException($"Catalog type {request.InputItem.CatalogTypeName} does not exist");
@@ -35,7 +35,7 @@ namespace Catalog.API.Handlers
 
             var catalogItem = new CatalogItem
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = request.Id,
                 Name = request.InputItem.Name,
                 Description = request.InputItem.Description,
                 Price = request.InputItem.Price,
@@ -51,13 +51,16 @@ namespace Catalog.API.Handlers
                 OnReorder = request.InputItem.OnReorder
             };
 
-            await _catalogContext.AddAsync(catalogItem);
+            _catalogContext.Update(catalogItem);
             var changes = await _catalogContext.SaveChangesAsync();
 
             if (changes > 0)
+            {
                 _eventBusPublisher.Publish(JsonSerializer.Serialize(catalogItem));
+                return true;
+            }
 
-            return catalogItem;
+            return false;
         }
     }
 }

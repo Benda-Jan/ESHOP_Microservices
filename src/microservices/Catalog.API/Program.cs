@@ -23,7 +23,7 @@ public class Program
 
         builder.Services.AddSwaggerGen(c =>
         {
-            c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+            //c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIs", Version = "v1" });
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -51,14 +51,6 @@ public class Program
 
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly));
 
-        builder.Services.AddScoped<EventBusCatalogItemCreated>(sp =>
-            new EventBusCatalogItemCreated(
-                hostName: builder.Configuration["RabbitMQ:Hostname"] ?? "localhost",
-                userName: builder.Configuration["RabbitMQ:Username"] ?? "user",
-                password: builder.Configuration["RabbitMQ:Password"] ?? "",
-                port: 5672)
-            );
-
         builder.Services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = builder.Configuration["RedisCache:ConnectionString"];
@@ -69,6 +61,8 @@ public class Program
         builder.Services.AddContextExtension(builder.Configuration);
 
         builder.Services.AddJwtAuthentication(builder.Configuration);
+
+        builder.Services.AddEventExtension(builder.Configuration);
 
         var rabbitConnection = new StringBuilder();
         rabbitConnection
@@ -100,9 +94,9 @@ public class Program
 
         // Configure the HTTP request pipeline.
 
-        if (app.Environment.IsEnvironment("Development") || app.Environment.IsEnvironment("Docker"))
+        if (app.Environment.IsEnvironment("Development"))
         {
-           // app.ApplyMigrations();
+            app.ApplyMigrations();
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -112,10 +106,10 @@ public class Program
                 await seeder.SeedBrands();
                 await seeder.SeedTypes();
             }
-
-            app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
         }
+
+        app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));
 
         app.UseAuthentication();
 

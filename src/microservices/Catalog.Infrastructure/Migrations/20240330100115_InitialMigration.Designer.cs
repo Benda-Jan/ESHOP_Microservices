@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20240329124131_InitialMigration")]
+    [Migration("20240330100115_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -27,11 +27,8 @@ namespace Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Catalog.Entities.DbSet.CatalogBrand", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("timestamp with time zone");
@@ -50,20 +47,19 @@ namespace Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Catalog.Entities.DbSet.CatalogItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<int>("AvailableStock")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CatalogBrandId")
-                        .HasColumnType("integer");
+                    b.Property<string>("CatalogBrandId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("CatalogTypeId")
-                        .HasColumnType("integer");
+                    b.Property<string>("CatalogTypeId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("timestamp with time zone");
@@ -86,11 +82,9 @@ namespace Catalog.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("PictureFilename")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PictureUri")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal>("Price")
@@ -110,11 +104,8 @@ namespace Catalog.Infrastructure.Migrations
 
             modelBuilder.Entity("Catalog.Entities.DbSet.CatalogType", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("timestamp with time zone");
