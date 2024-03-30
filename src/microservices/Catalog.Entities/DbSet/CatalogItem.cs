@@ -16,7 +16,7 @@ public class CatalogItem : BaseEntity
 	public int MaxStockThreshold { get; set; }
 	public bool OnReorder { get; set; }
 
-	public virtual CatalogType CatalogType { get; set; }
-    public virtual CatalogBrand CatalogBrand { get; set; }
+	public virtual CatalogType? CatalogType { get; set; }
+    public virtual CatalogBrand? CatalogBrand { get; set; }
 }
 

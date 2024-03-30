@@ -27,6 +27,9 @@ public class Program
 
         builder.Services.AddTransient<JwtMiddleware>();
 
+        builder.Services.AddCors(options =>
+            options.AddPolicy("newPolicy", policy => policy/*.WithOrigins("localhost")*/.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -35,6 +38,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        app.UseCors("newPolicy");
 
         app.UseMiddleware<JwtMiddleware>();
 
@@ -45,6 +49,8 @@ public class Program
         app.UseOcelot();
 
         app.MapControllers();
+
+        
 
         app.Run();
     }

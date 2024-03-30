@@ -88,7 +88,7 @@ public class JwtBuilder : IJwtBuilder
             ClaimsPrincipal principal = tokenHandler.ValidateToken(token, parameters, out _);
             return principal;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }

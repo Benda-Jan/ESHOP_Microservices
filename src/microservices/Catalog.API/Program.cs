@@ -8,6 +8,8 @@ using System.Reflection;
 using Catalog.API.EventsHandling;
 using Catalog.API.Services;
 using JwtLibrary;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Catalog.API;
 
@@ -68,13 +70,39 @@ public class Program
 
         builder.Services.AddJwtAuthentication(builder.Configuration);
 
+        var rabbitConnection = new StringBuilder();
+        rabbitConnection
+            .Append("amqp://")
+            .Append(builder.Configuration["RabbitMQ:Username"] ?? "user")
+            .Append(":")
+            .Append(builder.Configuration["RabbitMQ:Password"] ?? "")
+            .Append("@")
+            .Append(builder.Configuration["RabbitMQ:Hostname"] ?? "localhost")
+            .Append("/");
+        // "amqp://user:mypass@localhost/"
+
+        builder.Services.AddHealthChecks()
+            .AddNpgSql(
+                connectionString: builder.Configuration["PostgreSQL:ConnectionString"] ?? "",
+                tags: new string[] { "CatalogDatabase", "PostgreSQL" }
+            ).AddRedis(
+                builder.Configuration["RedisCache:ConnectionString"] ?? "",
+                tags: new string[] { "RedisCacheCatalogAPI", "Redis" }
+            ).AddRabbitMQ(
+                rabbitConnectionString: rabbitConnection.ToString(),
+                tags: new string[] { "EventBus", "RabbitMQ" }
+            );
+
+        builder.Services.AddCors(options =>
+            options.AddPolicy("newPolicy", policy => policy/*.WithOrigins("localhost")*/.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
 
         if (app.Environment.IsEnvironment("Development") || app.Environment.IsEnvironment("Docker"))
         {
-            app.ApplyMigrations();
+           // app.ApplyMigrations();
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -99,6 +127,8 @@ public class Program
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
+
+        app.UseCors("newPolicy");
 
         app.Run();
     }

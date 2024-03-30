@@ -19,14 +19,6 @@ public static class ContextExtension
         services.AddDbContext<CatalogContext>(options =>
             options.UseNpgsql(connectionStringBuilder.ConnectionString)
         );
-
-        services.AddHealthChecks()
-            .AddNpgSql(
-            connectionString: connectionString,
-            healthQuery: "SELECT 1",
-            name: "CatalogContextHelathCheck",
-            failureStatus: HealthStatus.Unhealthy,
-            tags: new[] { "sql", "npgsql", "healthchecks" });
     }
 }
 

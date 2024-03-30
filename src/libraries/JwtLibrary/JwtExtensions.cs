@@ -32,7 +32,7 @@ public static class JwtExtensions {
                 ValidateIssuer = true,
                 ValidIssuer = "http://localhost:5261",
                 ValidateAudience = false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SecretKey))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options?.SecretKey ?? ""))
             };
         });
 

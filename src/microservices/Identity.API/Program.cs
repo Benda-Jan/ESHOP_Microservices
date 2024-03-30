@@ -1,5 +1,7 @@
-﻿using Identity.API.Extensions;
+﻿using HealthChecks.UI.Client;
+using Identity.API.Extensions;
 using JwtLibrary;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace Identity.API;
 
@@ -20,6 +22,15 @@ public class Program
 
         builder.Services.AddJwtAuthentication(builder.Configuration);
 
+        builder.Services.AddHealthChecks()
+            .AddNpgSql(
+                connectionString: builder.Configuration["PostgreSQL:ConnectionString"] ?? "",
+                tags: new string[] { "IdentityDatabase", "PostgreSQL" }
+            );
+
+        builder.Services.AddCors(options =>
+            options.AddPolicy("newPolicy", policy => policy/*.WithOrigins("localhost")*/.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -29,11 +40,16 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseRouting();
-
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+
+        app.UseCors("newPolicy");
 
         app.Run();
     }
