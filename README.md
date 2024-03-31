@@ -3,8 +3,9 @@
 Contains:
  - PostgreSQL Database: ORM principle
  - Catalog.API: REST Api, CQRS concept (MediatR), CRUD, Redis Cache
- - EventBus: RabbitMQ
  - Identity.API: JWT Authentication
+ - Cart.API
+ - EventBus: RabbitMQ
  - Ocelot Gateway: JWT Authentication Middleware
 
 TODO:
@@ -18,4 +19,4 @@ TODO:
  - MongoDB database
 
 Images for Docker created with Dockerfiles
-Composed with docker-compose.yml file
+Orchestrated with docker-compose.yml file
