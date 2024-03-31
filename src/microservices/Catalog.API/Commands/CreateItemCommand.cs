@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Catalog.API.Commands;
 
-public class CreateItemCommand : IRequest<CatalogItem>
+public class CreateItemCommand : IRequest<CatalogItem?>
 {
     public CatalogItemInputDto InputItem { get; }
 

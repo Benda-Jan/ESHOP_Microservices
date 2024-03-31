@@ -4,8 +4,8 @@ namespace Catalog.Entities.DbSet;
 
 public abstract class BaseEntity
 {
-	public required string Id { get; set; }
-	public DateTime DateAdded { get; set; }
-	public DateTime DateUpdated { get; set; }
-}
+    public string Id { get; init; } = Guid.NewGuid().ToString();
+    public DateTime DateAdded { get; set;}//init; } = DateTime.Now;
+    public DateTime DateUpdated { get; set; }
 
+}

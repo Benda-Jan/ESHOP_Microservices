@@ -6,6 +6,6 @@ public class CatalogBrand : BaseEntity
 {
 	public string Name { get; set; } = string.Empty;
 
-	public static implicit operator CatalogBrand(string name) => new CatalogBrand { Name = name, Id = Guid.NewGuid().ToString() };
+	public static implicit operator CatalogBrand(string name) => new CatalogBrand { Name = name };
 }
 

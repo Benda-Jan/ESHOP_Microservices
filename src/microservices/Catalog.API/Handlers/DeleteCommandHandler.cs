@@ -7,31 +7,34 @@ using Microsoft.EntityFrameworkCore;
 using EventBus;
 using Catalog.API.EventsHandling;
 using System.Text.Json;
+using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers
 {
 	public class DeleteCommandHandler : IRequestHandler<DeleteItemCommand, CatalogItem?>
 	{
-        private readonly CatalogContext _catalogContext;
+        private readonly CatalogRepository _catalogRepository;
         private readonly EventBusCatalogItemRemoved _eventBusPublisher;
 
-        public DeleteCommandHandler(CatalogContext catalogContext, EventBusCatalogItemRemoved eventBusPublisher)
+        public DeleteCommandHandler(CatalogRepository catalogRepository, EventBusCatalogItemRemoved eventBusPublisher)
         {
-            _catalogContext = catalogContext;
+            _catalogRepository = catalogRepository;
             _eventBusPublisher = eventBusPublisher;
         }
 
         public async Task<CatalogItem?> Handle(DeleteItemCommand request, CancellationToken cancellationToken)
         {
-            var catalogItem = await _catalogContext.CatalogItems.SingleOrDefaultAsync(x => x.Id == request.ItemId);
+            var catalogItem = await _catalogRepository.RemoveItem(request.ItemId);
 
             if (catalogItem is not null)
             {
                 _eventBusPublisher.Publish(JsonSerializer.Serialize(catalogItem));
-                _catalogContext.Remove(catalogItem);
-                await _catalogContext.SaveChangesAsync();
+                return catalogItem;
             }
-            return catalogItem;
+            else
+            {
+                return null;
+            }
         }
     }
 }

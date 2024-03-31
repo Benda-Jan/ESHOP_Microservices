@@ -1,5 +1,6 @@
 ﻿
 using System;
+using Catalog.Infrastructure;
 using Catalog.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -19,6 +20,8 @@ public static class ContextExtension
         services.AddDbContext<CatalogContext>(options =>
             options.UseNpgsql(connectionStringBuilder.ConnectionString)
         );
+
+        services.AddTransient<ICatalogRepository, CatalogRepository>();
     }
 }
 

@@ -7,54 +7,25 @@ using Microsoft.EntityFrameworkCore;
 using EventBus;
 using Catalog.API.EventsHandling;
 using System.Text.Json;
+using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers
 {
-	public class CreateCommandHandler : IRequestHandler<CreateItemCommand, CatalogItem>
+	public class CreateCommandHandler : IRequestHandler<CreateItemCommand, CatalogItem?>
 	{
-        private readonly CatalogContext _catalogContext;
+        private readonly CatalogRepository _catalogRepository;
         private readonly EventBusCatalogItemCreated _eventBusPublisher;
 
-        public CreateCommandHandler(CatalogContext catalogContext, EventBusCatalogItemCreated eventBusPublisher)
+        public CreateCommandHandler(CatalogRepository catalogRepository, EventBusCatalogItemCreated eventBusPublisher)
         {
-            _catalogContext = catalogContext;
+            _catalogRepository = catalogRepository;
             _eventBusPublisher = eventBusPublisher;
         }
 
-        public async Task<CatalogItem> Handle(CreateItemCommand request, CancellationToken cancellationToken)
+        public async Task<CatalogItem?> Handle(CreateItemCommand request, CancellationToken cancellationToken)
         {
-            var alreadyExists = await _catalogContext.CatalogItems.AnyAsync(x => x.Name == request.InputItem.Name);
-            if (alreadyExists)
-                throw new BadHttpRequestException("Catalog item already exists");
-
-            var catalogType = await _catalogContext.CatalogTypes.Where(x => x.Name == request.InputItem.CatalogTypeName).FirstOrDefaultAsync()
-                ?? throw new BadHttpRequestException($"Catalog type {request.InputItem.CatalogTypeName} does not exist");
-
-            var catalogBrand = await _catalogContext.CatalogBrands.Where(x => x.Name == request.InputItem.CatalogBrandName).FirstOrDefaultAsync()
-                ?? throw new BadHttpRequestException($"Catalog brand {request.InputItem.CatalogBrandName} does not exist");
-
-            var catalogItem = new CatalogItem
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = request.InputItem.Name,
-                Description = request.InputItem.Description,
-                Price = request.InputItem.Price,
-                PictureFilename = request.InputItem.PictureFilename,
-                PictureUri = request.InputItem.PictureUri,
-                CatalogTypeId = catalogType.Id,
-                CatalogType = catalogType,
-                CatalogBrandId = catalogBrand.Id,
-                CatalogBrand = catalogBrand,
-                AvailableStock = request.InputItem.AvailableStock,
-                RestockThreshold = request.InputItem.RestockThreshold,
-                MaxStockThreshold = request.InputItem.MaxStockThreshold,
-                OnReorder = request.InputItem.OnReorder
-            };
-
-            await _catalogContext.AddAsync(catalogItem);
-            var changes = await _catalogContext.SaveChangesAsync();
-
-            if (changes > 0)
+            var catalogItem = await _catalogRepository.CreateItem(request.InputItem);
+            if (catalogItem is not null)
                 _eventBusPublisher.Publish(JsonSerializer.Serialize(catalogItem));
 
             return catalogItem;
