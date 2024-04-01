@@ -6,9 +6,9 @@ namespace Catalog.API.Queries;
 
 public class GetItemByIdQuery : IRequest<CatalogItem?>
 {
-    public int Id { get; }
+    public string Id { get; }
 
-    public GetItemByIdQuery(int id)
+    public GetItemByIdQuery(string id)
     {
         Id = id;
     }

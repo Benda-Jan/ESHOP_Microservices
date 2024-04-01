@@ -1,33 +1,25 @@
-﻿using System;
-using Catalog.Infrastructure.Data;
-using Catalog.Entities.Models;
+﻿using Catalog.Entities.Models;
 using Catalog.API.Queries;
 using Catalog.Entities.DbSet;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers;
 
 public class GetAllItemsHandler : IRequestHandler<GetAllItemsQuery, PaginatedItemsViewModel<CatalogItem>>
 {
-    private readonly CatalogContext _catalogContext;
+    private readonly CatalogRepository _catalogRepository;
 
-    public GetAllItemsHandler(CatalogContext catalogContext)
+    public GetAllItemsHandler(CatalogRepository catalogRepository)
     {
-        _catalogContext = catalogContext;
+        _catalogRepository = catalogRepository;
     }
 
     public async Task<PaginatedItemsViewModel<CatalogItem>> Handle(GetAllItemsQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = await _catalogContext.CatalogItems.LongCountAsync();
+        var result = await _catalogRepository.GetAllItems(request.PageSize, request.PageIndex);
 
-        var itemsOnPage = await _catalogContext.CatalogItems
-            .OrderBy(x => x.Name)
-            .Skip(request.PageSize * request.PageIndex)
-            .Take(request.PageSize)
-            .ToListAsync();
-
-        var model = new PaginatedItemsViewModel<CatalogItem>(request.PageIndex, request.PageSize, totalItems, itemsOnPage);
+        var model = new PaginatedItemsViewModel<CatalogItem>(result.PageIndex, result.PageSize, result.TotalItems, result.Items.ToList());
 
         return model;
     }

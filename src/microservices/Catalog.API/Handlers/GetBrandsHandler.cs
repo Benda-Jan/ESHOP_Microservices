@@ -1,6 +1,4 @@
-﻿using System;
-using Catalog.Infrastructure.Data;
-using Catalog.Entities.Models;
+﻿using Catalog.Infrastructure.Data;
 using Catalog.API.Queries;
 using Catalog.Entities.DbSet;
 using MediatR;

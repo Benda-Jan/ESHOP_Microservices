@@ -1,10 +1,6 @@
-﻿using System;
-using Catalog.API.Commands;
-using Catalog.Infrastructure.Data;
+﻿using Catalog.API.Commands;
 using Catalog.Entities.DbSet;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using EventBus;
 using Catalog.API.EventsHandling;
 using System.Text.Json;
 using Catalog.Infrastructure;

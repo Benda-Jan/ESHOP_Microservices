@@ -1,47 +1,27 @@
-﻿using System;
-using Catalog.Infrastructure.Data;
-using Catalog.API.Queries;
+﻿using Catalog.API.Queries;
 using Catalog.Entities.DbSet;
 using MediatR;
-using Catalog.API.Services;
-using Microsoft.EntityFrameworkCore;
 using Catalog.Entities.Models;
+using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers;
 
 public class GetItemsWithTypeHandler : IRequestHandler<GetItemsWithTypeQuery, PaginatedItemsViewModel<CatalogItem>>
 {
-    private readonly CatalogContext _catalogContext;
-    private readonly ICacheService _cache;
+    private readonly CatalogRepository _catalogRepository;
 
-    public GetItemsWithTypeHandler(CatalogContext catalogContext, ICacheService cache)
+    public GetItemsWithTypeHandler(CatalogRepository catalogRepository)
     {
-        _catalogContext = catalogContext;
-        _cache = cache;
+        _catalogRepository = catalogRepository;
     }
 
     public async Task<PaginatedItemsViewModel<CatalogItem>> Handle(GetItemsWithTypeQuery request, CancellationToken cancellationToken)
     {
-        var totalItems = await _catalogContext.CatalogItems.LongCountAsync();
+        var result = await _catalogRepository.GetItemsWithType(request.TypeName, request.PageSize, request.PageSize);
 
-        //string key = $"CatalogItem-{request.Id}";
-        //var cacheResult = _cache.GetCacheData<CatalogItem>(key);
-        //if (cacheResult is not null)
-        //    return cacheResult;
-
-        var databaseResult = await _catalogContext.CatalogItems
-            .OrderBy(x => x.Name)
-            .Where(x => x.CatalogType.Name == request.TypeName)
-            .Skip(request.PageIndex * request.PageSize)
-            .Take(request.PageSize)
-            .ToListAsync();
-
-        //if (databaseResult is not null)
-        //    _cache.SetCachedData<CatalogItem>(key, databaseResult, new TimeSpan(0, 0, 10));
-
-        return new PaginatedItemsViewModel<CatalogItem>(request.PageIndex, request.PageSize, totalItems, databaseResult);
+        return new PaginatedItemsViewModel<CatalogItem>(result.PageIndex, result.PageSize, result.TotalItems, result.Items.ToList());
     }
-        
+
 
 }
 
