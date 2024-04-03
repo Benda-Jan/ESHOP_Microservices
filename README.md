@@ -11,8 +11,7 @@ Contains:
 TODO:
  - GraphQL API
  - PostgreSQL without ORM
- - Authentication - JWT, Cookie based, OAuth
- - Redis Cache
+ - Authentication - Cookie based, OAuth
  - Unit, Component, ... tests
  - Microservice based on Domain Driven Design
  - Front-End in React
