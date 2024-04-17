@@ -1,5 +1,3 @@
-# EShop_Microservices
-
 Contains:
  - PostgreSQL Database: ORM principle
  - Catalog.API: REST Api, CQRS concept (MediatR), CRUD, Redis Cache
@@ -11,8 +9,7 @@ Contains:
 TODO:
  - GraphQL API
  - PostgreSQL without ORM
- - Authentication - JWT, Cookie based, OAuth
- - Redis Cache
+ - Authentication - Cookie based, OAuth
  - Unit, Component, ... tests
  - Microservice based on Domain Driven Design
  - Front-End in React
@@ -20,3 +17,7 @@ TODO:
 
 Images for Docker created with Dockerfiles
 Orchestrated with docker-compose.yml file
+
+SCHEMA:
+
+![image](https://github.com/Benda-Jan/EShop_Microservices/assets/138137335/dcbaef65-3ae5-4ce2-ae8e-8083689da76e)
