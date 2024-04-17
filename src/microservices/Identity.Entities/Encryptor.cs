@@ -11,8 +11,10 @@ public class Encryptor : IEncryptor
     public string GetSalt()
     {
         var saltBytes = new byte[SALT_SIZE];
-        var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(saltBytes);
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(saltBytes);
+        }
 
         return Convert.ToBase64String(saltBytes);
     }

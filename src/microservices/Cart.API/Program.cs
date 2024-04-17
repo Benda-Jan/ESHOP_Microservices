@@ -1,55 +1,32 @@
 ﻿using System.Reflection;
-using Cart.API.Extensions;
+using Extensions;
 using Cart.Infrastructure;
 using HealthChecks.UI.Client;
 using JwtLibrary;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using Cart.Infrastructure.Data;
 
 namespace Cart.API;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
+        builder.Services.AddContextExtension<CartContext>(builder.Configuration);
 
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
 
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIs", Version = "v1" });
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                In = ParameterLocation.Header,
-                Description = "Please insert JWT token with the prefix Bearer into field",
-                Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "bearer",
-                BearerFormat = "JWT"
-            });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                new string[] { }
-            }
-        });
-        });
+        builder.Services.AddSwaggerServiceExtension();
 
         builder.Services.AddJwtAuthentication(builder.Configuration);
 
-        builder.Services.AddContextExtension(builder.Configuration);
+        builder.Services.AddScoped<ICartRepository, CartRepository>();
 
         builder.Services.AddHealthChecks()
             .AddNpgSql(
@@ -63,7 +40,7 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
         {
             app.UseSwagger();
             app.UseSwaggerUI();

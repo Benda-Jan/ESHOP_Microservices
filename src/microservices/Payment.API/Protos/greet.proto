@@ -1,0 +1,23 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Payment.API";
+
+package payment;
+
+// The payment service definition.
+service PaymentManager {
+  // Sends a payment
+  rpc SendPayment (PaymentRequest) returns (PaymentReply);
+}
+
+// The request message containing the payment parameters.
+message PaymentRequest {
+  int64 amount = 1;
+}
+
+// The response message containing the payment response.
+message PaymentReply {
+  string message = 1;
+}
+
+

@@ -2,8 +2,10 @@
 using Cart.Entities.DbSet;
 using Cart.Entities.Dtos;
 using Cart.Infrastructure;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using Grpc.Net.Client;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Cart.API.Controllers;
 
@@ -21,40 +23,60 @@ public class CartController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    //[Authorize]
     [Route("user/{userId}/items")]
-    [ProducesResponseType(typeof(IEnumerable<CartItem>), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<IEnumerable<CartItem>>> GetItems(string userId)
-    {
-        var items = await _cartRepository.GetCartItems(userId);
-        return Ok(items);
-    }
+    public Task<IActionResult> GetItems(string userId)
+        => HandleAction(async () => await _cartRepository.GetCartItems(userId));
 
     [HttpPost]
-    [Authorize]
+    //[Authorize]
     [Route("user/{userId}/item")]
-    public async Task<IActionResult> CreateItem(string userId, CartItemInputDto cartItem)
+    public Task<IActionResult> CreateItem(string userId, CartItemInputDto cartItem)
+        => HandleAction(async () => await _cartRepository.InsertCartItem(userId, cartItem));
+
+    [HttpPost]
+    //[Authorize]
+    [Route("user/{userId}/ProcessPayment")]
+    public async Task<IActionResult> ProcessPayment(string userId)
     {
-        await _cartRepository.InsertCartItem(userId, cartItem);
-        return Ok();
+        var amountQuery = await _cartRepository.GetCartItems(userId);
+
+        if (amountQuery.IsNullOrEmpty())
+            return BadRequest("User Cart is empty");
+
+        var amount = (long)amountQuery!.Select(x => x.Price * x.Quantity).Sum();
+
+        using var channel = GrpcChannel.ForAddress("http://localhost:5059");
+        var client = new PaymentManager.PaymentManagerClient(channel);
+
+        var reply =  await client.SendPaymentAsync(new PaymentRequest { Amount = amount });
+
+        return Ok(reply.Message);
     }
 
     [HttpPut]
-    [Authorize]
+    //[Authorize]
     [Route("user/{userId}/item")]
-    public async Task<IActionResult> UpdateItem(string userId, CartItem cartItem)
-    {
-        await _cartRepository.UpdateCartItem(userId, cartItem);
-        return Ok();
-    }
+    public Task<IActionResult> UpdateItem(string userId, CartItem cartItem)
+        => HandleAction(async () => await _cartRepository.UpdateCartItem(userId, cartItem));
 
     [HttpDelete]
-    [Authorize]
-    [Route("user/{userId}/item/{cartId}")]
-    public async Task<IActionResult> DeleteItem(string userId, string cartId)
+    //[Authorize]
+    [Route("user/{userId}/item/{cartItemId}")]
+    public Task<IActionResult> DeleteItem(string userId, string cartItemId)
+        => HandleAction(async () => await _cartRepository.DeleteCartItem(userId, cartItemId));
+
+    private async Task<IActionResult> HandleAction(Func<Task> func)
     {
-        await _cartRepository.DeleteCartItem(userId, cartId);
-        return Ok();
+        try
+        {
+            await func();
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
 

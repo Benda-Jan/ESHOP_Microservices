@@ -1,9 +1,8 @@
-﻿using System;
-using System.Text.Json;
-using Catalog.API.Services;
+﻿using System.Linq.Expressions;
 using Catalog.Entities.DbSet;
 using Catalog.Entities.Dtos;
 using Catalog.Infrastructure.Data;
+using Catalog.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Infrastructure;
@@ -21,15 +20,11 @@ public class CatalogRepository : ICatalogRepository
 
     public async Task<CatalogItem?> CreateItem(CatalogItemInputDto inputItem)
     {
-        var alreadyExists = await _catalogContext.CatalogItems.AnyAsync(x => x.Name == inputItem.Name);
-        if (alreadyExists)
+        if (await _catalogContext.CatalogItems.AnyAsync(x => x.Name == inputItem.Name))
             throw new Exception("Catalog item already exists");
 
-        var catalogType = await _catalogContext.CatalogTypes.Where(x => x.Name == inputItem.CatalogTypeName).FirstOrDefaultAsync()
-            ?? throw new Exception($"Catalog type {inputItem.CatalogTypeName} does not exist");
-
-        var catalogBrand = await _catalogContext.CatalogBrands.Where(x => x.Name == inputItem.CatalogBrandName).FirstOrDefaultAsync()
-            ?? throw new Exception($"Catalog brand {inputItem.CatalogBrandName} does not exist");
+        var catalogBrand = await GetBrandByName(inputItem.CatalogBrandName);
+        var catalogType = await GetTypeByName(inputItem.CatalogTypeName);
 
         var catalogItem = new CatalogItem
         {
@@ -58,7 +53,6 @@ public class CatalogRepository : ICatalogRepository
     public async Task<CatalogItem?> RemoveItem(string itemId)
     {
         var catalogItem = await _catalogContext.CatalogItems.SingleOrDefaultAsync(x => x.Id == itemId);
-
         if (catalogItem is not null)
         {
             _catalogContext.Remove(catalogItem);
@@ -70,7 +64,6 @@ public class CatalogRepository : ICatalogRepository
     public async Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetAllItems(int pageSize = 10, int pageIndex = 0)
     {
         var totalItems = await _catalogContext.CatalogItems.LongCountAsync();
-
         var items = await _catalogContext.CatalogItems
             .OrderBy(x => x.Name)
             .Skip(pageSize * pageIndex)
@@ -89,50 +82,24 @@ public class CatalogRepository : ICatalogRepository
 
         var databaseResult = await _catalogContext.CatalogItems.FindAsync(itemId);
         if (databaseResult is not null)
-            _cache.SetCachedData<CatalogItem>(key, databaseResult, new TimeSpan(0, 0, 10));
+            _cache.SetCachedData<CatalogItem>(key, databaseResult, new TimeSpan(0, 0, 5));
 
         return databaseResult;
     }
 
-    public async Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetItemsWithBrand(string brandName, int pageSize = 10, int pageIndex = 0)
-    {
-        var totalItems = await _catalogContext.CatalogItems.LongCountAsync();
+    public Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetItemsByBrand(string brandName, int pageSize = 10, int pageIndex = 0)
+        =>  GetItemsByProperty(x => x.CatalogBrand != null && x.CatalogBrand.Name == brandName, pageSize, pageIndex);
 
-        var items = await _catalogContext.CatalogItems
-            .OrderBy(x => x.Name)
-            .Where(x => x.CatalogBrand != null && x.CatalogBrand.Name == brandName)
-            .Skip(pageIndex * pageSize)
-            .Take(pageSize)
-            .ToArrayAsync();
-
-        return (pageIndex, pageSize, totalItems, items);
-    }
-
-    public async Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetItemsWithType(string typeName, int pageSize = 10, int pageIndex = 0)
-    {
-        var totalItems = await _catalogContext.CatalogItems.LongCountAsync();
-
-        var items = await _catalogContext.CatalogItems
-            .OrderBy(x => x.Name)
-            .Where(x => x.CatalogType != null && x.CatalogType.Name == typeName)
-            .Skip(pageIndex * pageSize)
-            .Take(pageSize)
-            .ToArrayAsync();
-
-        return (pageIndex, pageSize, totalItems, items);
-    }
+    public Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetItemsByType(string typeName, int pageSize = 10, int pageIndex = 0)
+        =>  GetItemsByProperty(x => x.CatalogType != null && x.CatalogType.Name == typeName, pageSize, pageIndex);
 
     public async Task<CatalogItem?> UpdateItem(string itemId, CatalogItemInputDto inputItem)
     {
-        var alreadyExists = await _catalogContext.CatalogItems.AnyAsync(x => x.Name == inputItem.Name);
-        if (!alreadyExists)
+        if (!await _catalogContext.CatalogItems.AnyAsync(x => x.Name == inputItem.Name))
             throw new Exception("Catalog item does not exist");
 
-        var catalogType = await _catalogContext.CatalogTypes.Where(x => x.Name == inputItem.CatalogTypeName).FirstOrDefaultAsync()
-            ?? throw new Exception($"Catalog type {inputItem.CatalogTypeName} does not exist");
-
-        var catalogBrand = await _catalogContext.CatalogBrands.Where(x => x.Name == inputItem.CatalogBrandName).FirstOrDefaultAsync()
-            ?? throw new Exception($"Catalog brand {inputItem.CatalogBrandName} does not exist");
+        var catalogBrand = await GetBrandByName(inputItem.CatalogBrandName);
+        var catalogType = await GetTypeByName(inputItem.CatalogTypeName);
 
         var catalogItem = new CatalogItem
         {
@@ -157,5 +124,26 @@ public class CatalogRepository : ICatalogRepository
 
         return catalogItem;
     }
+
+    private async Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetItemsByProperty(Expression<Func<CatalogItem, bool>> filter, int pageSize = 10, int pageIndex = 0)
+    {
+        var totalItems = await _catalogContext.CatalogItems.LongCountAsync();
+        var items = await _catalogContext.CatalogItems
+            .OrderBy(x => x.Name)
+            .Where(filter)
+            .Skip(pageIndex * pageSize)
+            .Take(pageSize)
+            .ToArrayAsync();
+
+        return (pageIndex, pageSize, totalItems, items);
+    }
+
+    private Task<CatalogBrand> GetBrandByName(string brandName)
+        => _catalogContext.CatalogBrands.Where(x => x.Name == brandName).FirstAsync()
+            ?? throw new Exception($"Catalog brand {brandName} does not exist");
+
+    private Task<CatalogType> GetTypeByName(string typeName)
+        => _catalogContext.CatalogTypes.Where(x => x.Name == typeName).FirstAsync()
+            ?? throw new Exception($"Catalog type {typeName} does not exist");
 }
 

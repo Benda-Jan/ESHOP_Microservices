@@ -30,17 +30,13 @@ public class IdentityController : ControllerBase
     {
         var user = await _userRepository.GetUser(loginInputDto.Email);
 
-        if (user is null)
+        if (user == null)
             return NotFound($"User with email: {loginInputDto.Email} does not exist");
 
-        var result = user.ValidatePassword(loginInputDto.Password, _encryptor);
-
-        if (!result)
+        if (!user.ValidatePassword(loginInputDto.Password, _encryptor))
             return BadRequest("Incorrect password");
 
-        var token = _jwtBuilder.GetToken(user.Id);
-
-        return Ok(token);
+        return Ok(_jwtBuilder.GetToken(user.Id!));
     }
 
     [HttpPost]

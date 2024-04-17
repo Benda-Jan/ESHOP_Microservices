@@ -32,6 +32,9 @@
     <ProjectReference Include="..\..\libraries\JwtLibrary\JwtLibrary.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\..\libraries\Extensions\Extensions.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Extensions\" />

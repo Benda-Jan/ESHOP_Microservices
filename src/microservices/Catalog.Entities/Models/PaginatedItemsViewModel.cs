@@ -3,7 +3,7 @@ namespace Catalog.Entities.Models
 {
 	public class PaginatedItemsViewModel<T>
 	{
-		public List<T> ItemsOnPage { get; set; } = new List<T>();
+		public List<T> ItemsOnPage { get; set; }
 		public int PageIndex { get; set; }
 		public int PageSize { get; set; }
 		public long TotalItems { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Catalog.API.Services;
+namespace Catalog.Infrastructure.Services;
 
 public interface ICacheService
 {

@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
 
-  catalog-api:
+  catalog-api-read:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://0.0.0.0:5136
@@ -11,17 +11,32 @@ services:
         - catalog-database
         - catalog-redis-cache
         - rabbitmq-container
-    image: catalog-api
-    container_name: catalog-api
+    image: catalog-api-read
+    container_name: catalog-api-read
     ports:
       - "5136:5136"
       - "5137:5137"
+
+  catalog-api-write:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://0.0.0.0:5140
+      - ASPNETCORE_HTTP_PORTS=5140
+    depends_on:
+        - catalog-database
+        - catalog-redis-cache
+        - rabbitmq-container
+    image: catalog-api-write
+    container_name: catalog-api-write
+    ports:
+      - "5140:5140"
+      - "5141:5141"
 
   catalog-database:
     image: postgres:latest
     container_name: catalog-database
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_DB=CatalogContext
       - POSTGRES_USER=postgres
@@ -33,7 +48,7 @@ services:
     image: redis:7.2.4-alpine
     command: "redis-server"
     ports:
-      - 6371:6379
+      - "6371:6379"
     restart: always
 
   rabbitmq-container:
@@ -44,8 +59,8 @@ services:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=mypass
     ports:
-        - '5672:5672'
-        - '15672:15672'
+        - "5672:5672"
+        - "15672:15672"
 
   identity-api:
     environment:
@@ -64,7 +79,7 @@ services:
     image: postgres:latest
     container_name: identity-database
     ports:
-      - 5433:5433
+      - "5433:5433"
     environment:
       - POSTGRES_DB=UserContext
       - POSTGRES_USER=postgres
@@ -100,7 +115,7 @@ services:
     image: postgres:latest
     container_name: cart-database
     ports:
-      - 5434:5434
+      - "5434:5434"
     environment:
       - POSTGRES_DB=CartContext
       - POSTGRES_USER=postgres

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Cart.Entities.DbSet;
 using Cart.Entities.Dtos;
 using Cart.Infrastructure.Data;
@@ -20,21 +21,29 @@ public class CartRepository : ICartRepository
         var cartItem = await _cartContext.CartItems.SingleOrDefaultAsync(x => x.Id == cartItemId)
             ?? throw new Exception("Cart item does not exist");
 
-        _cartContext.CartItems.Remove(cartItem);
+        if (--cartItem.Quantity > 0)
+            _cartContext.CartItems.Update(cartItem);
+        else
+            _cartContext.CartItems.Remove(cartItem);
+        
         await _cartContext.SaveChangesAsync();
     }
 
-    public async Task<IList<CartItem>> GetCartItems(string userId)
+    public async Task<IEnumerable<CartItem>?> GetCartItems(string userId)
     {
         var userCart = await _cartContext.UserCarts.AsNoTracking().Where(x => x.UserId == userId).Include(x => x.CartItems).SingleOrDefaultAsync();
 
-        return userCart?.CartItems ?? new List<CartItem>();
+        return userCart?.CartItems;
     }
 
     public async Task InsertCartItem(string userId, CartItemInputDto input)
     {
-        var userCart = await _cartContext.UserCarts.SingleOrDefaultAsync(x => x.UserId == userId);
-        bool exists = userCart != null;
+        // check quantity
+        if (input.Quantity <= 0)
+            throw new Exception("Quantity invalid");
+
+        var userCart = await _cartContext.UserCarts.Where(x => x.UserId == userId).Include(x => x.CartItems).SingleOrDefaultAsync();
+        bool userCartExists = userCart != null;
         if (userCart is null)
         {
             userCart = new UserCart()
@@ -48,16 +57,25 @@ public class CartRepository : ICartRepository
         if (userCart.CartItems is null)
             userCart.CartItems = new List<CartItem>();
 
-        var cartItem = new CartItem
+        var cartItem = userCart.CartItems.SingleOrDefault(x => x.CatalogItemId == input.CatalogItemId);
+        if (cartItem is not null)
         {
-            Id = Guid.NewGuid().ToString(),
-            CatalogItemId = input.CatalogItemId,
-            Quantity = 1
-        };
+            cartItem.Quantity += input.Quantity;
+        }
+        else
+        {
+            cartItem = new CartItem
+            {
+                Id = Guid.NewGuid().ToString(),
+                CatalogItemId = input.CatalogItemId,
+                Name = input.Name,
+                Price = input.Price,
+                Quantity = input.Quantity
+            };
+            userCart.CartItems.Add(cartItem);
+        }
 
-        userCart.CartItems.Add(cartItem);
-
-        if (exists)
+        if (userCartExists)
             _cartContext.UserCarts.Update(userCart);
         else
             await _cartContext.UserCarts.AddAsync(userCart);

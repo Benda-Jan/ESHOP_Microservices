@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Catalog.API.Services;
+namespace Catalog.Infrastructure.Services;
 
 public class RedisCacheService : ICacheService
 {

@@ -1,26 +1,31 @@
 ﻿using HealthChecks.UI.Client;
-using Identity.API.Extensions;
+using Extensions;
+using Identity.Entities;
+using Identity.Infrastructure;
+using Identity.Infrastructure.Data;
 using JwtLibrary;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace Identity.API;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);      
         
         // Add services to the container.
+        builder.Services.AddContextExtension<UserContext>(builder.Configuration);
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddContextExtension(builder.Configuration);
-
         builder.Services.AddJwtAuthentication(builder.Configuration);
+
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<IEncryptor, Encryptor>();
 
         builder.Services.AddHealthChecks()
             .AddNpgSql(

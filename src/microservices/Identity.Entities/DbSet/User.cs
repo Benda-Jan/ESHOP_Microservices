@@ -4,7 +4,7 @@ namespace Identity.Entities.DbSet;
 
 public class User
 {
-    public string? Id { get; init; }
+    public required string Id { get; init; }
     public required string Username { get; init; }
     public required string Email { get; set; }
     public required string Password { get; set; }
@@ -17,17 +17,12 @@ public class User
         Id = Guid.NewGuid().ToString();
         Username = email;
         Email = email;
-        SetPassword(password, encryptor);
+        Salt = encryptor.GetSalt();
+        Password = encryptor.GetHash(password, Salt);
     }
 
     public User()
     {
-    }
-
-    public void SetPassword(string password, IEncryptor encryptor)
-    {
-        Salt = encryptor.GetSalt();
-        Password = encryptor.GetHash(password, Salt);
     }
 
     public bool ValidatePassword(string password, IEncryptor encryptor) =>

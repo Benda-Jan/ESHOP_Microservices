@@ -11,6 +11,6 @@
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\libraries\EventBus\EventBus.csproj" />
   </ItemGroup>
 </Project>

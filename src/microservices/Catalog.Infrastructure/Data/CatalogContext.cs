@@ -13,16 +13,5 @@ public class CatalogContext : DbContext
     public CatalogContext(DbContextOptions<CatalogContext> options) : base(options)
 	{
 	}
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        //builder.Entity<CatalogType>()
-        //    .HasIndex(u => u.Name)
-        //    .IsUnique();
-
-        //builder.Entity<CatalogBrand>()
-        //    .HasIndex(u => u.Name)
-        //    .IsUnique();
-    }
 }
 

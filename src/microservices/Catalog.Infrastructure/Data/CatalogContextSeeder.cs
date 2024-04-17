@@ -7,7 +7,7 @@ namespace Catalog.Infrastructure.Data;
 
 public class CatalogContextSeeder
 {
-	private CatalogContext _context;
+	private readonly CatalogContext _context;
 
     public CatalogContextSeeder(CatalogContext context)
     {
