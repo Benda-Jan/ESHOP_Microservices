@@ -4,8 +4,15 @@ using Cart.Infrastructure;
 using HealthChecks.UI.Client;
 using JwtLibrary;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.OpenApi.Models;
+using EventBus.Structures;
 using Cart.Infrastructure.Data;
+using Microsoft.VisualBasic;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Cart.Entities.DbSet;
+using Microsoft.AspNetCore.Mvc;
+using RabbitMQ.Client;
+using Cart.API.EventsHandling;
 
 namespace Cart.API;
 
@@ -16,7 +23,7 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddContextExtension<CartContext>(builder.Configuration);
+        builder.Services.AddContextExtension<CartContext>(builder.Configuration);  
 
         builder.Services.AddControllers();
 
@@ -36,6 +43,8 @@ public static class Program
 
         builder.Services.AddCors(options =>
             options.AddPolicy("newPolicy", policy => policy/*.WithOrigins("localhost")*/.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+        
+        builder.Services.AddEventExtension(builder.Configuration);
 
         var app = builder.Build();
 
@@ -62,4 +71,3 @@ public static class Program
         app.Run();
     }
 }
-
