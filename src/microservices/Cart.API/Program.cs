@@ -1,18 +1,11 @@
-﻿using System.Reflection;
-using Extensions;
+﻿using Extensions;
 using Cart.Infrastructure;
 using HealthChecks.UI.Client;
 using JwtLibrary;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using EventBus.Structures;
 using Cart.Infrastructure.Data;
-using Microsoft.VisualBasic;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using Cart.Entities.DbSet;
-using Microsoft.AspNetCore.Mvc;
-using RabbitMQ.Client;
 using Cart.API.EventsHandling;
+using Cart.API.Payment;
 
 namespace Cart.API;
 
@@ -34,6 +27,13 @@ public static class Program
         builder.Services.AddJwtAuthentication(builder.Configuration);
 
         builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+        builder.Services.AddTransient<IPaymentClient>(sp => 
+        {
+            var scope = sp.CreateScope();
+            var repository = scope.ServiceProvider.GetRequiredService<ICartRepository>();
+            return new PaymentClient(builder.Configuration["PaymentCient:ConnectionString"] ?? "", repository);
+        });
 
         builder.Services.AddHealthChecks()
             .AddNpgSql(

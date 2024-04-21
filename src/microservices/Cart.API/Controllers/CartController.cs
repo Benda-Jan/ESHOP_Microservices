@@ -1,12 +1,9 @@
-﻿using System.Net;
+﻿using Cart.API.Payment;
 using Cart.Entities.DbSet;
 using Cart.Entities.Dtos;
 using Cart.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
-using Grpc.Net.Client;
-using Microsoft.IdentityModel.Tokens;
-using Cart.API.EventsHandling;
 
 namespace Cart.API.Controllers;
 
@@ -14,13 +11,14 @@ namespace Cart.API.Controllers;
 [Route("v1/[controller]")]
 public class CartController : ControllerBase
 {
-    private readonly ILogger<CartController> _logger;
     private readonly ICartRepository _cartRepository;
+    private readonly IPaymentClient _paymentClient;
 
-    public CartController(ILogger<CartController> logger, ICartRepository cartRepository)
+    public CartController(ILogger<CartController> logger, ICartRepository cartRepository, PaymentClient paymentClient)
     {
         _logger = logger;
         _cartRepository = cartRepository;
+        _paymentClient = paymentClient;
     }
 
     [HttpGet]
@@ -38,22 +36,8 @@ public class CartController : ControllerBase
     [HttpPost]
     //[Authorize]
     [Route("user/{userId}/ProcessPayment")]
-    public async Task<IActionResult> ProcessPayment(string userId)
-    {
-        var amountQuery = await _cartRepository.GetCartItems(userId);
-
-        if (amountQuery.IsNullOrEmpty())
-            return BadRequest("User Cart is empty");
-
-        var amount = (long)amountQuery!.Select(x => x.Price * x.Quantity).Sum();
-
-        using var channel = GrpcChannel.ForAddress("http://localhost:5059");
-        var client = new PaymentManager.PaymentManagerClient(channel);
-
-        var reply =  await client.SendPaymentAsync(new PaymentRequest { Amount = amount });
-
-        return Ok(reply.Message);
-    }
+    public Task<IActionResult> ProcessPayment(string userId)
+        => HandleAction(async () => await _paymentClient.SendPayment(userId));
 
     [HttpPut]
     //[Authorize]
@@ -80,7 +64,7 @@ public class CartController : ControllerBase
         }
     }
 
-        private async Task<IActionResult> HandleAction(Func<Task> func)
+    private async Task<IActionResult> HandleAction(Func<Task> func)
     {
         try
         {
