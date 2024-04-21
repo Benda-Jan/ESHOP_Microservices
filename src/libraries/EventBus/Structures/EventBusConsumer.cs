@@ -16,15 +16,15 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
         Initialize(hostName, userName, password, port);
     }
 
-    public virtual void Subscribe(string queueName, string exchange)
+    public virtual void Subscribe(string exchange)
     {
         AddQueue(exchange);
 
         var consumer = new EventingBasicConsumer(_channel);
-
+        string text;
         consumer.Received += (a, b) =>
         {
-            var text = Encoding.UTF8.GetString(b.Body.ToArray());
+            text = Encoding.UTF8.GetString(b.Body.ToArray());
             //var messagebuffer = JsonSerializer.Serialize(objectToSend)); /
             Console.WriteLine($"Received '{text}'");
         };

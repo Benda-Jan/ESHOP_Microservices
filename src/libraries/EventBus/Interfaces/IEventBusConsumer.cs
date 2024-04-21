@@ -2,7 +2,7 @@
 
 public interface IEventBusConsumer
 {
-    void Subscribe(string queueName, string exchange);
+    void Subscribe(string exchange);
     void Unsubscribe();
 }
 
