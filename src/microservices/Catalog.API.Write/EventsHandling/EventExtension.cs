@@ -1,6 +1,6 @@
 ﻿using Catalog.API.Write.EventsHandling;
 
-namespace Catalog.API.Write.Extensions;
+namespace Catalog.API.Write.EventsHandling;
 
 public static class EventExtension
 {
