@@ -11,15 +11,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cart.Infrastructure.Migrations
 {
     [DbContext(typeof(CartContext))]
-    [Migration("20240329124416_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240419150917_UserCartsUpdatedMigrationAgain")]
+    partial class UserCartsUpdatedMigrationAgain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -32,6 +32,16 @@ namespace Cart.Infrastructure.Migrations
                     b.Property<string>("CatalogItemId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserCartId")
                         .HasColumnType("text");

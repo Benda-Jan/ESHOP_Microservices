@@ -11,3 +11,9 @@ public class CartItem
     public required int Quantity { get; set; }
 }
 
+public class CartItemDeserializator{
+    public required string Id { get; set; }
+    public required string Name { get; set; }
+    public required decimal Price { get; set; }
+}
+

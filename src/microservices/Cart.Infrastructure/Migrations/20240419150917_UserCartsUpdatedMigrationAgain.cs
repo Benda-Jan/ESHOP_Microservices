@@ -5,7 +5,7 @@
 namespace Cart.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class UserCartsUpdatedMigrationAgain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,6 +28,9 @@ namespace Cart.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     CatalogItemId = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
                     UserCartId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
