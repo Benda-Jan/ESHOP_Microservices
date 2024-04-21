@@ -10,7 +10,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
+          "Host": "catalog-api-read",
           "Port": 5136
         }
       ]
@@ -22,7 +22,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
+          "Host": "catalog-api-read",
           "Port": 5136
         }
       ]
@@ -34,7 +34,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
+          "Host": "catalog-api-read",
           "Port": 5136
         }
       ]
@@ -46,7 +46,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
+          "Host": "catalog-api-read",
           "Port": 5136
         }
       ]
@@ -58,7 +58,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
+          "Host": "catalog-api-read",
           "Port": 5136
         }
       ]
@@ -70,20 +70,52 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
+          "Host": "catalog-api-read",
           "Port": 5136
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/catalog/item",
+      "UpstreamPathTemplate": "/gateway/catalog",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamPathTemplate": "/v1/Catalog",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog-api",
-          "Port": 5136
+          "Host": "catalog-api-write",
+          "Port": 5140
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/catalog",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/v1/Catalog",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog-api-write",
+          "Port": 5140
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/catalog",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "DownstreamPathTemplate": "/v1/Catalog",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog-api-write",
+          "Port": 5140
         }
       ],
       "AuthenticationOptions": {

@@ -7,7 +7,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Publish
 WORKDIR /src
 COPY src/gateways/ApiGateway/*.csproj .
-COPY src/libraries/JwtLibrary/*.csproj .
 RUN dotnet restore ApiGateway.csproj
 COPY . .
 WORKDIR /src
