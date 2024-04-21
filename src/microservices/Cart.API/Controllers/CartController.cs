@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Grpc.Net.Client;
 using Microsoft.IdentityModel.Tokens;
+using Cart.API.EventsHandling;
 
 namespace Cart.API.Controllers;
 
@@ -66,7 +67,20 @@ public class CartController : ControllerBase
     public Task<IActionResult> DeleteItem(string userId, string cartItemId)
         => HandleAction(async () => await _cartRepository.DeleteCartItem(userId, cartItemId));
 
-    private async Task<IActionResult> HandleAction(Func<Task> func)
+    private async Task<IActionResult> HandleAction(Func<Task<Object?>> func)
+    {
+        try
+        {
+            var result = await func();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+        private async Task<IActionResult> HandleAction(Func<Task> func)
     {
         try
         {
