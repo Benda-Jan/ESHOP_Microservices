@@ -7,10 +7,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Publish
 WORKDIR /src
 COPY src/microservices/Catalog.API.Read/*.csproj .
-COPY src/microservices/Catalog.Entities/*.csproj .
-COPY src/microservices/Catalog.Infrastructure/*.csproj .
-COPY src/microservices/EventBus/*.csproj .
-COPY src/libraries/JwtLibrary/*.csproj .
 RUN dotnet restore Catalog.API.Read.csproj
 COPY . .
 WORKDIR /src
