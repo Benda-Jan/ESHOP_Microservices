@@ -4,6 +4,7 @@ using Cart.Entities.DbSet;
 using Cart.Entities.Dtos;
 using Cart.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace Cart.Infrastructure;
 
@@ -18,15 +19,25 @@ public class CartRepository : ICartRepository
 
     public async Task DeleteCartItem(string userId, string cartItemId)
     {
-        var cartItem = await _cartContext.CartItems.SingleOrDefaultAsync(x => x.Id == cartItemId)
+        var userCart = await _cartContext.UserCarts.Where(x => x.UserId == userId).Include(x => x.CartItems).FirstOrDefaultAsync()
+            ?? throw new Exception("User Cart does not exist");
+
+        var cartItem = userCart.CartItems?.SingleOrDefault(x => x.Id == cartItemId);
+        if (cartItem != null)
+        {
+            userCart.CartItems?.Remove(cartItem);
+            _cartContext.UserCarts.Update(userCart);
+            await _cartContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteCatalogItem(string cartItemId)
+    {
+        var cartItem = await _cartContext.CartItems.SingleOrDefaultAsync(x => x.CatalogItemId == cartItemId)
             ?? throw new Exception("Cart item does not exist");
 
-        if (--cartItem.Quantity > 0)
-            _cartContext.CartItems.Update(cartItem);
-        else
             _cartContext.CartItems.Remove(cartItem);
-        
-        await _cartContext.SaveChangesAsync();
+            await _cartContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<CartItem>?> GetCartItems(string userId)
@@ -88,6 +99,20 @@ public class CartRepository : ICartRepository
         _cartContext.CartItems.Update(cartItem);
         await _cartContext.SaveChangesAsync();
     }
+
+    public async Task UpdateCatalogItem(CartItemDeserializator cartItemDeserializator)
+    {
+        var cartItem = _cartContext.CartItems.FirstOrDefault(x => x.CatalogItemId == cartItemDeserializator.Id);
+        if (cartItem == null)
+            return;
+
+        cartItem.Name = cartItemDeserializator.Name;
+        cartItem.Price = cartItemDeserializator.Price;
+
+        _cartContext.CartItems.Update(cartItem);
+        await _cartContext.SaveChangesAsync();
+    }
+
 
 }
 
