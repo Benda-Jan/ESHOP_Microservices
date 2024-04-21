@@ -7,9 +7,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Publish
 WORKDIR /src
 COPY src/microservices/Cart.API/*.csproj .
-COPY src/microservices/Cart.Entities/*.csproj .
-COPY src/microservices/Cart.Infrastructure/*.csproj .
-COPY src/libraries/JwtLibrary/*.csproj .
 RUN dotnet restore Cart.API.csproj
 COPY . .
 WORKDIR /src
