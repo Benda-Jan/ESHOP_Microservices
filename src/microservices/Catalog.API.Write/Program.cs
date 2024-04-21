@@ -1,13 +1,12 @@
-﻿using Catalog.API.Write.Extensions;
+﻿using Catalog.API.Write.EventsHandling;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Data;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
-using Microsoft.OpenApi.Models;
 using JwtLibrary;
-using System.Text;
 using Catalog.Infrastructure.Services;
 using Extensions;
+using Catalog.API.Write.Extensions;
 
 namespace Catalog.API.Write;
 
@@ -37,27 +36,7 @@ public static class Program
 
         builder.Services.AddEventExtension(builder.Configuration);
 
-        var rabbitConnection = new StringBuilder();
-        rabbitConnection
-            .Append("amqp://")
-            .Append(builder.Configuration["RabbitMQ:Username"] ?? "user")
-            .Append(":")
-            .Append(builder.Configuration["RabbitMQ:Password"] ?? "")
-            .Append("@")
-            .Append(builder.Configuration["RabbitMQ:Hostname"] ?? "localhost")
-            .Append("/");
-
-        builder.Services.AddHealthChecks()
-            .AddNpgSql(
-                connectionString: builder.Configuration["PostgreSQL:ConnectionString"] ?? "",
-                tags: new string[] { "CatalogDatabase", "PostgreSQL" }
-            ).AddRedis(
-                builder.Configuration["RedisCache:ConnectionString"] ?? "",
-                tags: new string[] { "RedisCacheCatalogAPI", "Redis" }
-            ).AddRabbitMQ(
-                rabbitConnectionString: rabbitConnection.ToString(),
-                tags: new string[] { "EventBus", "RabbitMQ" }
-            );
+        builder.Services.AddHealthCheckExtensions(builder.Configuration);
 
         builder.Services.AddCors(options =>
             options.AddPolicy("newPolicy", policy => policy/*.WithOrigins("localhost")*/.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
