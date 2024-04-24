@@ -1,7 +1,0 @@
-{
-    "recommendations": [
-        "sonarsource.sonarlint-vscode",
-        "frymak.sonarqube-rules-synchroniser",
-        "adisreyaj.sonarqube-status"
-    ]
-}
