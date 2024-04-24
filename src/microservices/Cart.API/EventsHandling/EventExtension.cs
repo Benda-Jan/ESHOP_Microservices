@@ -11,6 +11,14 @@ public static class EventExtension
         var _password = configuration["RabbitMQ:Password"]!;
         var _port = int.Parse(configuration["RabbitMQ:Port"]!);
 
+        services.AddTransient(sp =>
+            new EventBusCartItemUpdated(
+                hostName: _hostname,
+                userName: _username,
+                password: _password,
+                port: _port)
+            );
+
         services.AddSingleton<IHostedService>(sp => 
         {
             var scope = sp.CreateScope();

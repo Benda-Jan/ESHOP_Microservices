@@ -1,4 +1,6 @@
-﻿using Cart.API.Payment;
+﻿using System.Text.Json;
+using Cart.API.EventsHandling;
+using Cart.API.Payment;
 using Cart.Entities.DbSet;
 using Cart.Entities.Dtos;
 using Cart.Infrastructure;
@@ -13,12 +15,13 @@ public class CartController : ControllerBase
 {
     private readonly ICartRepository _cartRepository;
     private readonly IPaymentClient _paymentClient;
+    private readonly EventBusCartItemUpdated _eventBusPublisher;
 
-    public CartController(ILogger<CartController> logger, ICartRepository cartRepository, PaymentClient paymentClient)
+    public CartController(ICartRepository cartRepository, IPaymentClient paymentClient, EventBusCartItemUpdated eventBusPublisher)
     {
-        _logger = logger;
         _cartRepository = cartRepository;
         _paymentClient = paymentClient;
+        _eventBusPublisher = eventBusPublisher;
     }
 
     [HttpGet]
@@ -31,7 +34,12 @@ public class CartController : ControllerBase
     //[Authorize]
     [Route("user/{userId}/item")]
     public Task<IActionResult> CreateItem(string userId, CartItemInputDto cartItem)
-        => HandleAction(async () => await _cartRepository.InsertCartItem(userId, cartItem));
+        => HandleAction(async () => 
+        {
+            await _cartRepository.InsertCartItem(userId, cartItem);
+            _eventBusPublisher.Publish(JsonSerializer.Serialize(new CartItemSerializer {CatalogItemId = cartItem.CatalogItemId, Quantity = cartItem.Quantity}));
+            return Task.CompletedTask;
+        });
 
     [HttpPost]
     //[Authorize]
@@ -49,7 +57,13 @@ public class CartController : ControllerBase
     //[Authorize]
     [Route("user/{userId}/item/{cartItemId}")]
     public Task<IActionResult> DeleteItem(string userId, string cartItemId)
-        => HandleAction(async () => await _cartRepository.DeleteCartItem(userId, cartItemId));
+        => HandleAction(async () => 
+        {
+            var result = await _cartRepository.DeleteCartItem(userId, cartItemId);
+            if (result != null)
+                _eventBusPublisher.Publish(JsonSerializer.Serialize(result));
+            return Ok(result);
+        });
 
     private async Task<IActionResult> HandleAction(Func<Task<Object?>> func)
     {

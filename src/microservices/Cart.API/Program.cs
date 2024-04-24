@@ -32,7 +32,7 @@ public static class Program
         {
             var scope = sp.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<ICartRepository>();
-            return new PaymentClient(builder.Configuration["PaymentCient:ConnectionString"] ?? "", repository);
+            return new PaymentClient(builder.Configuration["PaymentClient:ConnectionString"] ?? "", repository);
         });
 
         builder.Services.AddHealthChecks()

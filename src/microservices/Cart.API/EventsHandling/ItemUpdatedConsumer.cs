@@ -38,11 +38,13 @@ public class ItemUpdatedConsumer : EventBusConsumer, IHostedService
         consumer.Received += async (a, b) =>
         {
             var jsonObject = Encoding.UTF8.GetString(b.Body.ToArray());
-            var cartItem = JsonSerializer.Deserialize<CartItemDeserializator>(jsonObject);
-            try{
+            var cartItem = JsonSerializer.Deserialize<CartItemDeserializer>(jsonObject);
+            try
+            {
                 if (cartItem != null)
                     await _cartRepository.UpdateCatalogItem(cartItem);
-            } catch(Exception ex)
+            } 
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
