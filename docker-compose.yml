@@ -10,7 +10,6 @@ services:
     depends_on:
         - catalog-database
         - catalog-redis-cache
-        - rabbitmq-container
     image: catalog-api-read
     container_name: catalog-api-read
     ports:
@@ -42,18 +41,19 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pwd
     volumes:
-      - ./.containers/catalog-db:/var/lib/postgressql/data
+      - ./containers/catalog-db:/var/lib/postgresql/data
 
   catalog-redis-cache:
     image: redis:7.2.4-alpine
     command: "redis-server"
+    container_name: catalog-redis-cache
     ports:
       - "6371:6379"
     restart: always
 
   rabbitmq-container:
     image: rabbitmq:3.13-management-alpine
-    container_name: 'rabbitmq-container'
+    container_name: rabbitmq-container
     hostname: rabbitmq-container
     environment:
       - RABBITMQ_DEFAULT_USER=user
@@ -85,7 +85,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pwd
     volumes:
-      - ./.containers/user-db:/var/lib/postgressql/data
+      - ./containers/user-db:/var/lib/postgresql/data
     command: -p 5433
 
   gateway:
@@ -105,6 +105,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=5264
     depends_on:
         - cart-database
+        - rabbitmq-container
     image: cart-api
     container_name: cart-api
     ports:
@@ -121,5 +122,16 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pwd
     volumes:
-      - ./.containers/cart-db:/var/lib/postgressql/data
+      - ./containers/cart-db:/var/lib/postgresql/data
     command: -p 5434
+
+  payment-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://0.0.0.0:5059
+      - ASPNETCORE_HTTP_PORTS=5059
+    image: payment-api
+    container_name: payment-api
+    ports:
+      - "5059:5059"
+      - "5060:5060"
