@@ -29,5 +29,6 @@
     <ProjectReference Include="..\..\src\microservices\Catalog.Infrastructure\Catalog.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\microservices\Catalog.Entities\Catalog.Entities.csproj" />
     <ProjectReference Include="..\..\src\microservices\Catalog.API.Write\Catalog.API.Write.csproj" />
+    <ProjectReference Include="..\..\src\microservices\Catalog.API.Read\Catalog.API.Read.csproj" />
   </ItemGroup>
 </Project>
