@@ -30,6 +30,7 @@ services:
     ports:
       - "5140:5140"
       - "5141:5141"
+    restart: "always"
 
   catalog-database:
     image: postgres:latest
@@ -111,6 +112,7 @@ services:
     ports:
       - "5264:5264"
       - "5265:5265"
+    restart: "always"
 
   cart-database:
     image: postgres:latest
