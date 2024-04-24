@@ -1,5 +1,4 @@
-﻿using Catalog.API.Write.EventsHandling;
-using Catalog.Infrastructure;
+﻿using Catalog.Infrastructure;
 
 namespace Catalog.API.Write.EventsHandling;
 
@@ -11,14 +10,6 @@ public static class EventExtension
         var _username = configuration["RabbitMQ:Username"]!;
         var _password = configuration["RabbitMQ:Password"]!;
         var _port = int.Parse(configuration["RabbitMQ:Port"]!);
-
-        services.AddTransient(sp =>
-            new EventBusCatalogItemCreated(
-                hostName: _hostname,
-                userName: _username,
-                password: _password,
-                port: _port)
-            );
 
         services.AddTransient(sp =>
             new EventBusCatalogItemUpdated(
