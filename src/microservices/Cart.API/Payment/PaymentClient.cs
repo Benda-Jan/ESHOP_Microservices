@@ -1,7 +1,8 @@
 using Cart.Infrastructure;
 using Grpc.Net.Client;
-using static Cart.API.PaymentManager;
 using Microsoft.IdentityModel.Tokens;
+using Payment.API;
+using static Payment.API.PaymentManager;
 
 namespace Cart.API.Payment;
 
