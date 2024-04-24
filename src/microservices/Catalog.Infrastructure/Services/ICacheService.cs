@@ -3,9 +3,9 @@ namespace Catalog.Infrastructure.Services;
 
 public interface ICacheService
 {
-    T? GetCacheData<T>(string key);
-    void SetCachedData<T>(string key, T data, TimeSpan cacheDuration);
-    void RemoveData(string key);
+    Task<T?> GetCacheData<T>(string key);
+    Task SetCachedData<T>(string key, T data, TimeSpan cacheDuration);
+    Task RemoveData(string key);
 
 }
 

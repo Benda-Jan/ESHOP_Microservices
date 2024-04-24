@@ -44,7 +44,7 @@ public class CatalogRepository : ICatalogRepository
     public async Task<CatalogItem?> GetItemById(string itemId)
     {
         string key = $"CatalogItem-{itemId}";
-        var cacheResult = _cache.GetCacheData<CatalogItem>(key);
+        var cacheResult = await _cache.GetCacheData<CatalogItem>(key);
         if (cacheResult is not null)
             return cacheResult;
 
@@ -54,7 +54,7 @@ public class CatalogRepository : ICatalogRepository
             .SingleOrDefaultAsync(x => x.Id == itemId);
             
         if (databaseResult is not null)
-            _cache.SetCachedData(key, databaseResult, _cacheTimeSpan);
+            await _cache.SetCachedData(key, databaseResult, _cacheTimeSpan);
 
         return databaseResult;
     }
@@ -158,15 +158,15 @@ public class CatalogRepository : ICatalogRepository
 
     public async Task<CatalogItem?> RemoveItem(string itemId)
     {
-        var catalogItem = await _catalogContext.CatalogItems.SingleOrDefaultAsync(x => x.Id == itemId);
-        if (catalogItem is not null)
-        {
-            _catalogContext.Remove(catalogItem);
-            await _catalogContext.SaveChangesAsync();
+        var catalogItem = await _catalogContext.CatalogItems.SingleOrDefaultAsync(x => x.Id == itemId)
+            ?? throw new Exception("Catalog item does not exist");
 
-            string key = $"CatalogItem-{catalogItem.Id}";
-            _cache.RemoveData(key);
-        }
+        _catalogContext.Remove(catalogItem);
+        await _catalogContext.SaveChangesAsync();
+
+        string key = $"CatalogItem-{catalogItem.Id}";
+        await _cache.RemoveData(key);
+        
         return catalogItem;
     }
 
@@ -205,12 +205,12 @@ public class CatalogRepository : ICatalogRepository
         return (pageIndex, pageSize, totalItems, items);
     }
 
-    private Task<CatalogBrand> GetBrandByName(string brandName)
-        => _catalogContext.CatalogBrands.Where(x => x.Name == brandName).FirstAsync()
+    private async Task<CatalogBrand> GetBrandByName(string brandName)
+        => await _catalogContext.CatalogBrands.Where(x => x.Name == brandName).FirstOrDefaultAsync()
             ?? throw new Exception($"Catalog brand '{brandName}' does not exist");
 
-    private Task<CatalogType> GetTypeByName(string typeName)
-        => _catalogContext.CatalogTypes.Where(x => x.Name == typeName).FirstAsync()
+    private async Task<CatalogType> GetTypeByName(string typeName)
+        => await _catalogContext.CatalogTypes.Where(x => x.Name == typeName).FirstOrDefaultAsync()
             ?? throw new Exception($"Catalog type '{typeName}' does not exist");
 
     private async Task<CatalogItem?> UpdateDatabaseAndCache(CatalogItem catalogItem)
@@ -219,7 +219,7 @@ public class CatalogRepository : ICatalogRepository
         await _catalogContext.SaveChangesAsync();
 
         string key = $"CatalogItem-{catalogItem.Id}";
-        _cache.SetCachedData(key, catalogItem, _cacheTimeSpan);
+        await _cache.SetCachedData(key, catalogItem, _cacheTimeSpan);
 
         return catalogItem;
     }

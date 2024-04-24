@@ -13,9 +13,9 @@ public class RedisCacheService : ICacheService
         _cache = cache;
     }
 
-    public T? GetCacheData<T>(string key)
+    public async Task<T?> GetCacheData<T>(string key)
     {
-        var jsonData = _cache.GetString(key);
+        var jsonData = await _cache.GetStringAsync(key);
 
         if (jsonData is null)
             return default;
@@ -23,12 +23,12 @@ public class RedisCacheService : ICacheService
         return JsonSerializer.Deserialize<T>(jsonData);
     }
 
-    public void RemoveData(string key)
+    public async Task RemoveData(string key)
     {
-        throw new NotImplementedException();
+        await _cache.RemoveAsync(key);
     }
 
-    public void SetCachedData<T>(string key, T data, TimeSpan cacheDuration)
+    public async Task SetCachedData<T>(string key, T data, TimeSpan cacheDuration)
     {
         var options = new DistributedCacheEntryOptions
         {
@@ -36,7 +36,7 @@ public class RedisCacheService : ICacheService
         };
 
         var jsonData = JsonSerializer.Serialize(data);
-        _cache.SetString(key, jsonData, options);
+        await _cache.SetStringAsync(key, jsonData, options);
     }
 }
 
