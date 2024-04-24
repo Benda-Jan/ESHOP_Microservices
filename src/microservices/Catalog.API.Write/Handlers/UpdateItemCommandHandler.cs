@@ -6,12 +6,12 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers
 {
-	public class UpdateCommandHandler : IRequestHandler<UpdateItemCommand, bool>
+	public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, bool>
 	{
         private readonly ICatalogRepository _catalogRepository;
         private readonly EventBusCatalogItemUpdated _eventBusPublisher;
 
-        public UpdateCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemUpdated eventBusPublisher)
+        public UpdateItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemUpdated eventBusPublisher)
         {
             _catalogRepository = catalogRepository;
             _eventBusPublisher = eventBusPublisher;
