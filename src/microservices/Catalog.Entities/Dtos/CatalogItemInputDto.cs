@@ -1,5 +1,4 @@
-﻿using System;
-using Catalog.Entities.Models;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Catalog.Entities.Dtos;
 
@@ -8,6 +7,7 @@ public class CatalogItemInputDto
     public string Name { get; set; } = String.Empty;
     public string Description { get; set; } = String.Empty;
     public decimal Price { get; set; }
+    public IFormFile? File { get; set; }
     public string PictureFilename { get; set; } = String.Empty;
     public string PictureUri { get; set; } = String.Empty;
     public string CatalogTypeName { get; set; } = String.Empty;
