@@ -20,3 +20,15 @@ public class CatalogItem : BaseEntity
     public virtual CatalogBrand? CatalogBrand { get; set; }
 }
 
+public class CatalogItemDeserializer
+{
+	public required string CatalogItemId { get; set; }
+	public required int Quantity { get; set; }
+}
+
+public class CatalogItemSerializer
+{
+	public required string Id { get; set; }
+	public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+}

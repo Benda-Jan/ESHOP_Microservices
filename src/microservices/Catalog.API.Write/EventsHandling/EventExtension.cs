@@ -1,4 +1,5 @@
 ﻿using Catalog.API.Write.EventsHandling;
+using Catalog.Infrastructure;
 
 namespace Catalog.API.Write.EventsHandling;
 
@@ -34,6 +35,14 @@ public static class EventExtension
                 password: _password,
                 port: _port)
             );
+
+        services.AddSingleton<IHostedService>(sp => 
+        {
+            var scope = sp.CreateScope();
+            var repository = scope.ServiceProvider.GetRequiredService<ICatalogRepository>();
+            var eventCatalogItemRemoved = scope.ServiceProvider.GetRequiredService<EventBusCatalogItemRemoved>();
+            return new ItemUpdatedConsumer(_hostname, _username, _password, _port, repository, eventCatalogItemRemoved);
+        });
     }
 }
 
