@@ -3,12 +3,10 @@ using Stripe;
 
 namespace Payment.API.Services;
 
-public class GreeterService : PaymentManager.PaymentManagerBase
+public class PaymentService : PaymentManager.PaymentManagerBase
 {
-    private readonly ILogger<GreeterService> _logger;
-    public GreeterService(ILogger<GreeterService> logger)
+    public PaymentService()
     {
-        _logger = logger;
     }
 
     public override Task<PaymentReply> SendPayment(PaymentRequest request, ServerCallContext context)
