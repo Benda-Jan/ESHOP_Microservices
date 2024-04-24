@@ -7,5 +7,6 @@ public class CartItemInputDto
     public required string Name { get; set; }
     public required decimal Price { get; set; }
     public int Quantity { get; set; } = 1;
+    public int AvailableStock {get; set; }
 }
 
