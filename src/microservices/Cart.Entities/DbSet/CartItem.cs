@@ -4,8 +4,9 @@ namespace Cart.Entities.DbSet;
 
 public class CartItem
 {
-	public string Id { get; set; } = string.Empty;
+	public string Id { get; set; } = Guid.NewGuid().ToString();
 	public required string CatalogItemId { get; set; }
+    public required string UserId { get; set; }
     public required string Name { get; set; }
     public required decimal Price { get; set; }
     public required int Quantity { get; set; }

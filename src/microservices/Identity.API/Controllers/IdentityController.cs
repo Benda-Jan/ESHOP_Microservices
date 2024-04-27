@@ -61,18 +61,16 @@ public class IdentityController : ControllerBase
     }
 
     [HttpGet("validate")]
-    public async Task<ActionResult> Validate([FromQuery(Name = "email")] string email,
-                                 [FromQuery(Name = "token")] string token)
+    public async Task<ActionResult> Validate([FromQuery(Name = "email")] string email, [FromQuery(Name = "token")] string token)
     {
-        var u = await _userRepository.GetUser(email);
+        var user = await _userRepository.GetUser(email);
 
-        if (u is null)
+        if (user is null)
             return NotFound("User not found.");
-
 
         var userId = _jwtBuilder.ValidateToken(token);
 
-        if (userId != u.Id)
+        if (userId != user.Id)
             return BadRequest("Invalid token.");
 
         return Ok(userId);

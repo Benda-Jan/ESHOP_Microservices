@@ -7,9 +7,9 @@ public interface ICartRepository
 {
     Task<IEnumerable<CartItem>?> GetCartItems(string userId);
     Task InsertCartItem(string userId, CartItemInputDto input);
-    Task UpdateCartItem(string userId, CartItem cartItem);
+    Task UpdateCartItem(string userId, string cartItemId, int quantity);
     Task UpdateCatalogItem(CartItemDeserializer cartItemDeserializer);
     Task<CartItem?> DeleteCartItem(string userId, string cartItemId);
-    Task DeleteCatalogItem(string cartItemId);
+    Task DeleteCatalogItem(string catalogItemId);
 }
 

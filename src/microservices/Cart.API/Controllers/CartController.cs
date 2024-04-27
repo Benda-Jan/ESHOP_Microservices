@@ -50,8 +50,8 @@ public class CartController : ControllerBase
     [HttpPut]
     //[Authorize]
     [Route("user/{userId}/item")]
-    public Task<IActionResult> UpdateItem(string userId, CartItem cartItem)
-        => HandleAction(async () => await _cartRepository.UpdateCartItem(userId, cartItem));
+    public Task<IActionResult> UpdateItem(string userId, string cartItemId, int quantity)
+        => HandleAction(async () => await _cartRepository.UpdateCartItem(userId, cartItemId, quantity));
 
     [HttpDelete]
     //[Authorize]

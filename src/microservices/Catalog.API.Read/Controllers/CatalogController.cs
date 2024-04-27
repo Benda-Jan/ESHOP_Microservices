@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Catalog.Entities.DbSet;
-using Catalog.Entities.Models;
-using Catalog.Entities.Dtos;
-using System.Net;
 using MediatR;
 using Catalog.API.Read.Queries;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Catalog.API.Read.Controllers;
 
@@ -22,17 +17,17 @@ public class CatalogController : Controller
 
     [HttpGet]
     [Route("items")]
-    public Task<IActionResult> GetAllItems(int pageSize = 10, int pageIndex = 0)
+    public Task<IActionResult> GetAllItems([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
         => HandleQuery(async () => await _mediator.Send(new GetAllItemsQuery(pageSize, pageIndex)));
 
     [HttpGet]
     [Route("items/brand/{brandName}")]
-    public Task<IActionResult> GetItemsWithBrand(string brandName, int pageSize = 10, int pageIndex = 0)
+    public Task<IActionResult> GetItemsWithBrand(string brandName, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
         => HandleQuery(async () => await _mediator.Send(new GetItemsWithBrandQuery(brandName, pageSize, pageIndex)));
 
     [HttpGet]
     [Route("items/type/{typeName}")]
-    public Task<IActionResult> GetItemsWithType(string typeName, int pageSize = 10, int pageIndex = 0)
+    public Task<IActionResult> GetItemsWithType(string typeName, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
         => HandleQuery(async () => await _mediator.Send(new GetItemsWithTypeQuery(typeName, pageSize, pageIndex)));
 
     [HttpGet]

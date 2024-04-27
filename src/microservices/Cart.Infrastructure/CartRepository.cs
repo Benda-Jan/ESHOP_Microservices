@@ -15,43 +15,16 @@ public class CartRepository : ICartRepository
         _cartContext = cartContext;
 	}
 
-    public async Task<CartItem?> DeleteCartItem(string userId, string cartItemId)
-    {
-        var userCart = await _cartContext.UserCarts.Where(x => x.UserId == userId).Include(x => x.CartItems).FirstOrDefaultAsync()
-            ?? throw new Exception("User Cart does not exist");
-
-        var cartItem = userCart.CartItems?.SingleOrDefault(x => x.Id == cartItemId);
-        if (cartItem != null)
-        {
-            userCart.CartItems?.Remove(cartItem);
-            _cartContext.UserCarts.Update(userCart);
-            await _cartContext.SaveChangesAsync();
-
-            cartItem.Quantity = -cartItem.Quantity;
-        }
-        return cartItem;
-    }
-
-    public async Task DeleteCatalogItem(string cartItemId)
-    {
-        var cartItem = await _cartContext.CartItems.SingleOrDefaultAsync(x => x.CatalogItemId == cartItemId)
-            ?? throw new Exception("Cart item does not exist");
-
-            _cartContext.CartItems.Remove(cartItem);
-            await _cartContext.SaveChangesAsync();
-    }
-
     public async Task<IEnumerable<CartItem>?> GetCartItems(string userId)
-    {
-        var userCart = await _cartContext.UserCarts.AsNoTracking().Where(x => x.UserId == userId).Include(x => x.CartItems).SingleOrDefaultAsync();
-
-        return userCart?.CartItems;
-    }
+        => await _cartContext.UserCarts
+            .AsNoTracking()
+            .Where(x => x.UserId == userId)
+            .Select(x => x.CartItems)
+            .SingleOrDefaultAsync();
 
     public async Task InsertCartItem(string userId, CartItemInputDto input)
     {
-        // check quantity
-        if (input.Quantity > input.AvailableStock)
+        if (input.Quantity >= input.AvailableStock)
             throw new Exception("Quantity invalid");
 
         var userCart = await _cartContext.UserCarts.Where(x => x.UserId == userId).Include(x => x.CartItems).SingleOrDefaultAsync();
@@ -80,6 +53,7 @@ public class CartRepository : ICartRepository
             {
                 Id = Guid.NewGuid().ToString(),
                 CatalogItemId = input.CatalogItemId,
+                UserId = userId,
                 Name = input.Name,
                 Price = input.Price,
                 Quantity = input.Quantity
@@ -95,23 +69,63 @@ public class CartRepository : ICartRepository
         await _cartContext.SaveChangesAsync();
     }
 
-    public async Task UpdateCartItem(string userId, CartItem cartItem)
+    public async Task UpdateCartItem(string userId, string cartItemId, int quantity)
     {
+        var cartItem = await _cartContext.UserCarts
+            .Where(x => x.UserId == userId)
+            .SelectMany(x => x.CartItems)
+            .SingleOrDefaultAsync(x => x.Id == cartItemId && x.UserId == userId)
+            ?? throw new Exception("Cart item does not exist in user's cart");
+
+        cartItem.Quantity = quantity;
+
         _cartContext.CartItems.Update(cartItem);
         await _cartContext.SaveChangesAsync();
     }
 
     public async Task UpdateCatalogItem(CartItemDeserializer cartItemDeserializer)
     {
-        var cartItem = _cartContext.CartItems.FirstOrDefault(x => x.CatalogItemId == cartItemDeserializer.Id);
-        if (cartItem == null)
-            return;
+        var cartItemsQuery = _cartContext.CartItems.Where(x => x.CatalogItemId == cartItemDeserializer.Id);
 
-        cartItem.Name = cartItemDeserializer.Name;
-        cartItem.Price = cartItemDeserializer.Price;
+        if (await cartItemsQuery.CountAsync() == 0)
+            throw new Exception("Cart item does not exist");
 
-        _cartContext.CartItems.Update(cartItem);
-        await _cartContext.SaveChangesAsync();
+        foreach (var cartItem in cartItemsQuery)
+        {
+            cartItem.Name = cartItemDeserializer.Name;
+            cartItem.Price = cartItemDeserializer.Price;
+
+            _cartContext.CartItems.Update(cartItem);
+            await _cartContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<CartItem?> DeleteCartItem(string userId, string cartItemId)
+    {
+        var userCart = await _cartContext.UserCarts.Where(x => x.UserId == userId).Include(x => x.CartItems).SingleOrDefaultAsync()
+            ?? throw new Exception("User Cart does not exist");
+
+        var cartItem = userCart.CartItems.SingleOrDefault(x => x.Id == cartItemId);
+        if (cartItem != null)
+        {
+            userCart.CartItems?.Remove(cartItem);
+            _cartContext.UserCarts.Update(userCart);
+            await _cartContext.SaveChangesAsync();
+
+            cartItem.Quantity = -cartItem.Quantity;
+        }
+        return cartItem;
+    }
+
+    public async Task DeleteCatalogItem(string catalogItemId)
+    {
+        var cartItemsQuery = _cartContext.CartItems.Where(x => x.CatalogItemId == catalogItemId);
+        
+        foreach (var cartItem in cartItemsQuery)
+        {
+            _cartContext.CartItems.Remove(cartItem);
+            await _cartContext.SaveChangesAsync();
+        }
     }
 }
 
