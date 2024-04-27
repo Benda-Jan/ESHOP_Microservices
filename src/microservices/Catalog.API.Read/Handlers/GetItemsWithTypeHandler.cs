@@ -17,7 +17,7 @@ public class GetItemsWithTypeHandler : IRequestHandler<GetItemsWithTypeQuery, Pa
 
     public async Task<PaginatedItemsViewModel<CatalogItem>> Handle(GetItemsWithTypeQuery request, CancellationToken cancellationToken)
     {
-        var result = await _catalogRepository.GetItemsByType(request.TypeName, request.PageSize, request.PageSize);
+        var result = await _catalogRepository.GetItemsByType(request.TypeName, request.PageSize, request.PageIndex);
 
         return new PaginatedItemsViewModel<CatalogItem>(result.PageIndex, result.PageSize, result.TotalItems, result.Items.ToList());
     }

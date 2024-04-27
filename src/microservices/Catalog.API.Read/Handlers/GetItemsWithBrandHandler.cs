@@ -17,7 +17,7 @@ public class GetItemsWithBrandHandler : IRequestHandler<GetItemsWithBrandQuery, 
 
     public async Task<PaginatedItemsViewModel<CatalogItem>> Handle(GetItemsWithBrandQuery request, CancellationToken cancellationToken)
     {
-        var result = await _catalogRepository.GetItemsByBrand(request.BrandName, request.PageSize, request.PageSize);
+        var result = await _catalogRepository.GetItemsByBrand(request.BrandName, request.PageSize, request.PageIndex);
 
         return new PaginatedItemsViewModel<CatalogItem>(result.PageIndex, result.PageSize, result.TotalItems, result.Items.ToList());
     }
