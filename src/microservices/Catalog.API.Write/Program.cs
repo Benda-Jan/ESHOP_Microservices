@@ -10,9 +10,9 @@ using Catalog.API.Write.Extensions;
 
 namespace Catalog.API.Write;
 
-public static class Program
+public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -44,20 +44,6 @@ public static class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-
-        if (app.Environment.IsEnvironment("Development"))
-        {
-            app.ApplyMigrations();
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<CatalogContext>();
-
-                var seeder = new CatalogContextSeeder(context);
-                await seeder.SeedBrands();
-                await seeder.SeedTypes();
-            }
-        }
 
         app.UseSwagger(c => { c.RouteTemplate = "/swagger/{documentName}/swagger.json"; });
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1"));

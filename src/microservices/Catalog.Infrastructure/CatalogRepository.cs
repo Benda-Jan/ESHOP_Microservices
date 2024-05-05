@@ -121,7 +121,7 @@ public class CatalogRepository : ICatalogRepository
 
     public async Task<CatalogItem?> UpdateItem(string itemId, CatalogItemInputDto inputItem)
     {
-        if (!await _catalogContext.CatalogItems.AnyAsync(x => x.Name == inputItem.Name))
+        if (!await _catalogContext.CatalogItems.AnyAsync(x => x.Id == itemId))
             throw new Exception("Catalog item does not exist");
 
         var catalogBrand = await GetBrandByName(inputItem.CatalogBrandName);
