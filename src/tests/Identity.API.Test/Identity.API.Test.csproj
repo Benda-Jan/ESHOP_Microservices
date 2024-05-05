@@ -14,6 +14,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="xunit" Version="2.7.1" />
@@ -30,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\microservices\Identity.Infrastructure\Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\..\microservices\Identity.Entities\Identity.Entities.csproj" />
+    <ProjectReference Include="..\..\microservices\Identity.API\Identity.API.csproj" />
   </ItemGroup>
 
 </Project>
