@@ -4,6 +4,7 @@ using Cart.API.Payment;
 using Cart.Entities.DbSet;
 using Cart.Entities.Dtos;
 using Cart.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -33,12 +34,12 @@ public class CartController : ControllerBase
     [HttpPost]
     //[Authorize]
     [Route("user/{userId}/item")]
-    public Task<IActionResult> CreateItem(string userId, CartItemInputDto cartItem)
+    public Task<IActionResult> CreateItem(string userId, [FromBody]CartItemInputDto cartItem)
         => HandleAction(async () => 
         {
-            await _cartRepository.InsertCartItem(userId, cartItem);
+            var result = await _cartRepository.InsertCartItem(userId, cartItem);
             _eventBusPublisher.Publish(JsonSerializer.Serialize(new CartItemSerializer {CatalogItemId = cartItem.CatalogItemId, Quantity = cartItem.Quantity}));
-            return Task.CompletedTask;
+            return result;
         });
 
     [HttpPost]
@@ -50,7 +51,7 @@ public class CartController : ControllerBase
     [HttpPut]
     //[Authorize]
     [Route("user/{userId}/item")]
-    public Task<IActionResult> UpdateItem(string userId, string cartItemId, int quantity)
+    public Task<IActionResult> UpdateItem(string userId, string cartItemId, [FromBody]int quantity)
         => HandleAction(async () => await _cartRepository.UpdateCartItem(userId, cartItemId, quantity));
 
     [HttpDelete]
@@ -62,7 +63,7 @@ public class CartController : ControllerBase
             var result = await _cartRepository.DeleteCartItem(userId, cartItemId);
             if (result != null)
                 _eventBusPublisher.Publish(JsonSerializer.Serialize(result));
-            return Ok(result);
+            return result;
         });
 
     private async Task<IActionResult> HandleAction(Func<Task<Object?>> func)
@@ -71,19 +72,6 @@ public class CartController : ControllerBase
         {
             var result = await func();
             return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    private async Task<IActionResult> HandleAction(Func<Task> func)
-    {
-        try
-        {
-            await func();
-            return Ok();
         }
         catch (Exception ex)
         {

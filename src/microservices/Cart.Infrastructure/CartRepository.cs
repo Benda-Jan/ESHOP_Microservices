@@ -22,7 +22,7 @@ public class CartRepository : ICartRepository
             .Select(x => x.CartItems)
             .SingleOrDefaultAsync();
 
-    public async Task InsertCartItem(string userId, CartItemInputDto input)
+    public async Task<UserCart?> InsertCartItem(string userId, CartItemInputDto input)
     {
         if (input.Quantity >= input.AvailableStock)
             throw new Exception("Quantity invalid");
@@ -67,9 +67,11 @@ public class CartRepository : ICartRepository
             await _cartContext.UserCarts.AddAsync(userCart);
 
         await _cartContext.SaveChangesAsync();
+
+        return userCart;
     }
 
-    public async Task UpdateCartItem(string userId, string cartItemId, int quantity)
+    public async Task<CartItem?> UpdateCartItem(string userId, string cartItemId, int quantity)
     {
         var cartItem = await _cartContext.UserCarts
             .Where(x => x.UserId == userId)
@@ -81,6 +83,8 @@ public class CartRepository : ICartRepository
 
         _cartContext.CartItems.Update(cartItem);
         await _cartContext.SaveChangesAsync();
+
+        return cartItem;
     }
 
     public async Task UpdateCatalogItem(CartItemDeserializer cartItemDeserializer)
@@ -113,6 +117,10 @@ public class CartRepository : ICartRepository
             await _cartContext.SaveChangesAsync();
 
             cartItem.Quantity = -cartItem.Quantity;
+        } 
+        else
+        {
+            throw new Exception("Cart item does not exist in user's cart");
         }
         return cartItem;
     }
