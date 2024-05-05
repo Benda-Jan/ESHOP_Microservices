@@ -12,10 +12,10 @@ public class User
     public bool IsAdmin { get; set; }
 
     [SetsRequiredMembers]
-    public User(string email, string password, IEncryptor encryptor)
+    public User(string username, string email, string password, IEncryptor encryptor)
     {
         Id = Guid.NewGuid().ToString();
-        Username = email;
+        Username = username;
         Email = email;
         Salt = encryptor.GetSalt();
         Password = encryptor.GetHash(password, Salt);
