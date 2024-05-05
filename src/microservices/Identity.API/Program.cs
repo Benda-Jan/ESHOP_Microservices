@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace Identity.API;
 
-public static class Program
+public class Program
 {
     public static void Main(string[] args)
     {

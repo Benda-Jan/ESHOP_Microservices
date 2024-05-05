@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Identity.Entities.Dtos;
 using Identity.Infrastructure;
-using Identity.Entities;
-using Identity.Entities.DbSet;
-using JwtLibrary;
 
 namespace Identity.API.Controllers;
 
@@ -12,68 +9,50 @@ namespace Identity.API.Controllers;
 public class IdentityController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
-    private readonly IEncryptor _encryptor;
-    private readonly ILogger<IdentityController> _logger;
-    private readonly IJwtBuilder _jwtBuilder;
 
-    public IdentityController(IUserRepository userRepository, IEncryptor encryptor, ILogger<IdentityController> logger, IJwtBuilder jwtBuilder)
+    public IdentityController(IUserRepository userRepository)
     {
         _userRepository = userRepository;
-        _encryptor = encryptor;
-        _logger = logger;
-        _jwtBuilder = jwtBuilder;
     }
 
     [HttpPost]
     [Route("login")]
-    public async Task<ActionResult> Login([FromBody]LoginInputDto loginInputDto)
-    {
-        var user = await _userRepository.GetUser(loginInputDto.Email);
-
-        if (user == null)
-            return NotFound($"User with email: {loginInputDto.Email} does not exist");
-
-        if (!user.ValidatePassword(loginInputDto.Password, _encryptor))
-            return BadRequest("Incorrect password");
-
-        return Ok(_jwtBuilder.GetToken(user.Id!));
-    }
+    public Task<IActionResult> Login([FromBody]LoginInputDto loginInputDto)
+        => HandleAction(async () => await _userRepository.ValidateUser(loginInputDto));
 
     [HttpPost]
     [Route("register")]
-    public async Task<ActionResult> Register([FromBody]RegisterInputDto registerInputDto)
+    public Task<IActionResult> Register([FromBody]RegisterInputDto registerInputDto)
+        => HandleAction(async () => await _userRepository.InsertUser(registerInputDto));
+
+    [HttpGet]
+    [Route("validate")]
+    public async Task<IActionResult> ValidateToken([FromBody] TokenInputDto input)
     {
-        if (registerInputDto.Password != registerInputDto.PasswordConfirmation)
-            return BadRequest($"Passwords are not the same");
+        // var user = await _userRepository.FindByEmail(email);
 
-        var newUser = new User(registerInputDto.Email, registerInputDto.Password, _encryptor);
+        // if (user is null)
+        //     return NotFound("User not found.");
 
-        try
-        {
-            await _userRepository.InsertUser(newUser);
-        }
-        catch(Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        // var userId = _jwtBuilder.ValidateToken(token);
 
+        // if (userId != user.Id)
+        //     return BadRequest("Invalid token.");
+
+        // return Ok(userId);
         return Ok();
     }
 
-    [HttpGet("validate")]
-    public async Task<ActionResult> Validate([FromQuery(Name = "email")] string email, [FromQuery(Name = "token")] string token)
+    private async Task<IActionResult> HandleAction(Func<Task<object>> func)
     {
-        var user = await _userRepository.GetUser(email);
-
-        if (user is null)
-            return NotFound("User not found.");
-
-        var userId = _jwtBuilder.ValidateToken(token);
-
-        if (userId != user.Id)
-            return BadRequest("Invalid token.");
-
-        return Ok(userId);
+        try
+        {
+            return Ok(await func());
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
 
