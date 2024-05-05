@@ -6,16 +6,24 @@ using EventBus.Exceptions;
 
 namespace EventBus.Structures;
 
-public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, IDisposable
+public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher
 {
-    public EventBusPublisher(string exchangeName, string hostName, string userName, string password, int port)
+    private readonly string _hostName;
+    private readonly string _userName;
+    private readonly string _password;
+    private readonly int _port;
+    protected EventBusPublisher(string exchangeName, string hostName, string userName, string password, int port) : base(exchangeName)
     {
-        Initialize(hostName, userName, password, port);
-        AddExchange(exchangeName);
+        _hostName = hostName;
+        _userName = userName;
+        _password = password;
+        _port = port;
     }
 
     public virtual void Publish(string message)
     {
+        Initialize(_hostName, _userName, _password, _port);
+
         if (_exchangeName is null)
             throw new ExchangeUndeclaredException("No exchange specified");
 
@@ -25,11 +33,6 @@ public abstract class EventBusPublisher : EventBusClient, IEventBusPublisher, ID
             routingKey: string.Empty,
             body: messagebuffer
             );
-    }
-
-    public void Dispose()
-    {
-        // ??
     }
 }
 

@@ -10,9 +10,9 @@ namespace Catalog.API.Handlers
 	public class DeleteItemCommandHandler : IRequestHandler<DeleteItemCommand, CatalogItem?>
 	{
         private readonly ICatalogRepository _catalogRepository;
-        private readonly EventBusCatalogItemRemoved _eventBusPublisher;
+        private readonly EventBusCatalogItemDeleted _eventBusPublisher;
 
-        public DeleteItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemRemoved eventBusPublisher)
+        public DeleteItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemDeleted eventBusPublisher)
         {
             _catalogRepository = catalogRepository;
             _eventBusPublisher = eventBusPublisher;

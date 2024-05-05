@@ -12,7 +12,7 @@ public class ItemDeletedConsumer : EventBusConsumer, IHostedService
 {
     private readonly ICartRepository _cartRepository;
     public ItemDeletedConsumer(string hostname, string username, string password, int port, ICartRepository cartRepository) 
-        : base(hostname, username, password, port)
+        : base("Exchange.CatalogItemDeleted", hostname, username, password, port)
     {
         _cartRepository = cartRepository;
         
@@ -20,7 +20,7 @@ public class ItemDeletedConsumer : EventBusConsumer, IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        Subscribe("Exchange.CatalogItemRemoved");
+        Subscribe();
         return Task.CompletedTask;
     }
 
@@ -29,9 +29,9 @@ public class ItemDeletedConsumer : EventBusConsumer, IHostedService
         return Task.CompletedTask;
     }
 
-    public override void Subscribe(string exchange)
+    public override void Subscribe()
     {
-        AddQueue(exchange);
+        AddQueue();
 
         var consumer = new EventingBasicConsumer(_channel);
 

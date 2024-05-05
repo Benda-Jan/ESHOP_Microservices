@@ -11,14 +11,14 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
     public string ConsumerTag { get; set; } = string.Empty;
     protected string _queueName = string.Empty;
 
-    public EventBusConsumer(string hostName, string userName, string password, int port)
+    public EventBusConsumer(string exchangeName, string hostName, string userName, string password, int port) : base(exchangeName)
     {
         Initialize(hostName, userName, password, port);
     }
 
-    public virtual void Subscribe(string exchange)
+    public virtual void Subscribe()
     {
-        AddQueue(exchange);
+        AddQueue();
 
         var consumer = new EventingBasicConsumer(_channel);
         string text;
@@ -61,19 +61,16 @@ public class EventBusConsumer : EventBusClient, IEventBusConsumer
         ConsumerTag = string.Empty;
     }
 
-    protected void AddQueue(string exchangeName)
+    protected void AddQueue()
     {
         if (_channel is null)
             throw new ChannelNotCreatedException("Channel not created yet");
 
-        _exchangeName = exchangeName;
         _queueName = _channel.QueueDeclare().QueueName;
-
-        AddExchange(exchangeName);
 
         _channel.QueueBind(
             queue: _queueName,
-            exchange: exchangeName,
+            exchange: _exchangeName,
             routingKey: string.Empty
             );
     }

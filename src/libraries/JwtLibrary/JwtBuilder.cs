@@ -64,7 +64,7 @@ public class JwtBuilder : IJwtBuilder
         return userId;
     }
 
-    private ClaimsPrincipal? GetPrincipal(string token)
+    public ClaimsPrincipal? GetPrincipal(string token)
     {
         try
         {

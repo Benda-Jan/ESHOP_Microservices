@@ -9,7 +9,7 @@ using Cart.API.Payment;
 
 namespace Cart.API;
 
-public static class Program
+public class Program
 {
     public static void Main(string[] args)
     {

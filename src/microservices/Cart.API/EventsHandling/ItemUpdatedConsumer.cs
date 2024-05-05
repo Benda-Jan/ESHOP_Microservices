@@ -12,15 +12,14 @@ public class ItemUpdatedConsumer : EventBusConsumer, IHostedService
 {
     private readonly ICartRepository _cartRepository;
     public ItemUpdatedConsumer(string hostname, string username, string password, int port, ICartRepository cartRepository) 
-        : base(hostname, username, password, port)
+        : base("Exchange.CatalogItemUpdated", hostname, username, password, port)
     {
         _cartRepository = cartRepository;
-        
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        Subscribe("Exchange.CatalogItemUpdated");
+        Subscribe();
         return Task.CompletedTask;
     }
 
@@ -29,9 +28,9 @@ public class ItemUpdatedConsumer : EventBusConsumer, IHostedService
         return Task.CompletedTask;
     }
 
-    public override void Subscribe(string exchange)
+    public override void Subscribe()
     {
-        AddQueue(exchange);
+        AddQueue();
 
         var consumer = new EventingBasicConsumer(_channel);
 

@@ -20,7 +20,7 @@ public static class EventExtension
             );
 
         services.AddTransient(sp =>
-            new EventBusCatalogItemRemoved(
+            new EventBusCatalogItemDeleted(
                 hostName: _hostname,
                 userName: _username,
                 password: _password,
@@ -31,7 +31,7 @@ public static class EventExtension
         {
             var scope = sp.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<ICatalogRepository>();
-            var eventCatalogItemRemoved = scope.ServiceProvider.GetRequiredService<EventBusCatalogItemRemoved>();
+            var eventCatalogItemRemoved = scope.ServiceProvider.GetRequiredService<EventBusCatalogItemDeleted>();
             return new ItemUpdatedConsumer(_hostname, _username, _password, _port, repository, eventCatalogItemRemoved);
         });
     }

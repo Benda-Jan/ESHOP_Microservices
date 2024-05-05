@@ -13,17 +13,17 @@ namespace Catalog.API.Write.EventsHandling;
 public class ItemUpdatedConsumer : EventBusConsumer, IHostedService
 {
     private readonly ICatalogRepository _catalogRepository;
-    private readonly EventBusCatalogItemRemoved _eventBusCatalogItemRemoved;
-    public ItemUpdatedConsumer(string hostname, string username, string password, int port, ICatalogRepository catalogRepository, EventBusCatalogItemRemoved eventBusCatalogItemRemoved) 
-        : base(hostname, username, password, port)
+    private readonly EventBusCatalogItemDeleted _eventBusCatalogItemDeleted;
+    public ItemUpdatedConsumer(string hostname, string username, string password, int port, ICatalogRepository catalogRepository, EventBusCatalogItemDeleted eventBusCatalogItemDeleted) 
+        : base("Exchange.CartItemUpdated", hostname, username, password, port)
     {
         _catalogRepository = catalogRepository;
-        _eventBusCatalogItemRemoved = eventBusCatalogItemRemoved;
+        _eventBusCatalogItemDeleted = eventBusCatalogItemDeleted;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        Subscribe("Exchange.CartItemUpdated");
+        Subscribe();
         return Task.CompletedTask;
     }
 
@@ -32,9 +32,9 @@ public class ItemUpdatedConsumer : EventBusConsumer, IHostedService
         return Task.CompletedTask;
     }
 
-    public override void Subscribe(string exchange)
+    public override void Subscribe()
     {
-        AddQueue(exchange);
+        AddQueue();
 
         var consumer = new EventingBasicConsumer(_channel);
 
@@ -57,7 +57,7 @@ public class ItemUpdatedConsumer : EventBusConsumer, IHostedService
                         {
                             Id = cartItem.CatalogItemId
                         };
-                        _eventBusCatalogItemRemoved.Publish(JsonSerializer.Serialize(serializeCartItem));
+                        _eventBusCatalogItemDeleted.Publish(JsonSerializer.Serialize(serializeCartItem));
                     } 
                 }
                     

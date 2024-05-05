@@ -3,10 +3,11 @@ using MediatR;
 using Catalog.API.Write.EventsHandling;
 using System.Text.Json;
 using Catalog.Infrastructure;
+using Catalog.Entities.DbSet;
 
 namespace Catalog.API.Handlers
 {
-	public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, bool>
+	public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, CatalogItem?>
 	{
         private readonly ICatalogRepository _catalogRepository;
         private readonly EventBusCatalogItemUpdated _eventBusPublisher;
@@ -17,14 +18,14 @@ namespace Catalog.API.Handlers
             _eventBusPublisher = eventBusPublisher;
         }
 
-        public async Task<bool> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
+        public async Task<CatalogItem?> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
         {
             var result = await _catalogRepository.UpdateItem(request.Id, request.InputItem);
 
             if (result != null)
                 _eventBusPublisher.Publish(JsonSerializer.Serialize(result));
 
-            return result != null;
+            return result;
         }
     }
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Catalog.API.Write.Commands;
 
-public class UpdateItemCommand : IRequest<bool>
+public class UpdateItemCommand : IRequest<CatalogItem?>
 {
     public string Id { get; }
     public CatalogItemInputDto InputItem { get; }
