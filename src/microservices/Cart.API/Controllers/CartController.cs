@@ -12,18 +12,11 @@ namespace Cart.API.Controllers;
 
 [ApiController]
 [Route("v1/[controller]")]
-public class CartController : ControllerBase
+public class CartController(ICartRepository cartRepository, IPaymentClient paymentClient, EventBusCartItemUpdated eventBusPublisher) : ControllerBase
 {
-    private readonly ICartRepository _cartRepository;
-    private readonly IPaymentClient _paymentClient;
-    private readonly EventBusCartItemUpdated _eventBusPublisher;
-
-    public CartController(ICartRepository cartRepository, IPaymentClient paymentClient, EventBusCartItemUpdated eventBusPublisher)
-    {
-        _cartRepository = cartRepository;
-        _paymentClient = paymentClient;
-        _eventBusPublisher = eventBusPublisher;
-    }
+    private readonly ICartRepository _cartRepository = cartRepository;
+    private readonly IPaymentClient _paymentClient = paymentClient;
+    private readonly EventBusCartItemUpdated _eventBusPublisher = eventBusPublisher;
 
     [HttpGet]
     //[Authorize]

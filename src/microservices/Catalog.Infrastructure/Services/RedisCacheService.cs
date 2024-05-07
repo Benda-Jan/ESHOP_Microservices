@@ -4,14 +4,9 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Catalog.Infrastructure.Services;
 
-public class RedisCacheService : ICacheService
+public class RedisCacheService(IDistributedCache cache) : ICacheService
 {
-	private readonly IDistributedCache _cache;
-
-    public RedisCacheService(IDistributedCache cache)
-    {
-        _cache = cache;
-    }
+	private readonly IDistributedCache _cache = cache;
 
     public async Task<T?> GetCacheData<T>(string key)
     {

@@ -8,18 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Infrastructure;
 
-public class CatalogRepository : ICatalogRepository
+public class CatalogRepository(CatalogContext catalogContext, ICacheService cache) : ICatalogRepository
 {
-    private readonly CatalogContext _catalogContext;
-    private readonly ICacheService _cache;
-    private readonly TimeSpan _cacheTimeSpan;
-
-    public CatalogRepository(CatalogContext catalogContext, ICacheService cache)
-    {
-        _catalogContext = catalogContext;
-        _cache = cache;
-        _cacheTimeSpan = new TimeSpan(0, 0, 10);
-    }
+    private readonly CatalogContext _catalogContext = catalogContext;
+    private readonly ICacheService _cache = cache;
+    private readonly TimeSpan _cacheTimeSpan = new TimeSpan(0, 0, 10);
 
     public async Task<(int PageIndex, int PageSize, long TotalItems, CatalogItem[] Items)> GetAllItems(int pageSize = 10, int pageIndex = 0)
     {

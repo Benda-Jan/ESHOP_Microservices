@@ -5,16 +5,10 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Write.Handlers
 {
-	public class CreateItemCommandHandler : IRequestHandler<CreateItemCommand, CatalogItem?>
+	public class CreateItemCommandHandler(ICatalogRepository catalogRepository, IWebHostEnvironment environment) : IRequestHandler<CreateItemCommand, CatalogItem?>
 	{
-        private readonly ICatalogRepository _catalogRepository;
-        private readonly IWebHostEnvironment _environment;
-
-        public CreateItemCommandHandler(ICatalogRepository catalogRepository, IWebHostEnvironment environment)
-        {
-            _catalogRepository = catalogRepository;
-            _environment = environment;
-        }
+        private readonly ICatalogRepository _catalogRepository = catalogRepository;
+        private readonly IWebHostEnvironment _environment = environment;
 
         public Task<CatalogItem?> Handle(CreateItemCommand request, CancellationToken cancellationToken)
             => _catalogRepository.CreateItem(request.InputItem, _environment.WebRootPath ?? "");

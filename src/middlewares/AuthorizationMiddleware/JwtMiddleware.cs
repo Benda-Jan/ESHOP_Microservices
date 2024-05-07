@@ -4,15 +4,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace AuthorizationMiddleware;
 
-public class JwtMiddleware : IMiddleware
+public class JwtMiddleware(IJwtBuilder jwtBuilder) : IMiddleware
 {
-    private readonly IJwtBuilder _jwtBuilder;
-
-    public JwtMiddleware(IJwtBuilder jwtBuilder)
-    {
-        _jwtBuilder = jwtBuilder;
-    }
-
+    private readonly IJwtBuilder _jwtBuilder = jwtBuilder;
+    
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         var bearer = context.Request.Headers["Authorization"].ToString();

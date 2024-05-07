@@ -5,15 +5,9 @@ using MediatR;
 
 namespace Catalog.API.Read.Queries;
 
-public class GetAllItemsQuery : IRequest<PaginatedItemsViewModel<CatalogItem>>
+public class GetAllItemsQuery(int pageSize, int pageIndex) : IRequest<PaginatedItemsViewModel<CatalogItem>>
 {
-    public int PageSize { get; }
-    public int PageIndex { get; }
-
-    public GetAllItemsQuery(int pageSize, int pageIndex)
-    {
-        PageSize = pageSize;
-        PageIndex = pageIndex;
-    }
+    public int PageSize { get; } = pageSize;
+    public int PageIndex { get; } = pageIndex;
 }
 

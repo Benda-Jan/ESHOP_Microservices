@@ -6,23 +6,18 @@ namespace Identity.API.Controllers;
 
 [ApiController]
 [Route("/v1/[controller]")]
-public class IdentityController : ControllerBase
+public class IdentityController(IUserRepository userRepository) : ControllerBase
 {
-    private readonly IUserRepository _userRepository;
-
-    public IdentityController(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
+    private readonly IUserRepository _userRepository = userRepository;
 
     [HttpPost]
     [Route("login")]
-    public Task<IActionResult> Login([FromBody]LoginInputDto loginInputDto)
+    public Task<IActionResult> Login(LoginInputDto loginInputDto)
         => HandleAction(async () => await _userRepository.ValidateUser(loginInputDto));
 
     [HttpPost]
     [Route("register")]
-    public Task<IActionResult> Register([FromBody]RegisterInputDto registerInputDto)
+    public Task<IActionResult> Register(RegisterInputDto registerInputDto)
         => HandleAction(async () => await _userRepository.InsertUser(registerInputDto));
 
     [HttpGet]

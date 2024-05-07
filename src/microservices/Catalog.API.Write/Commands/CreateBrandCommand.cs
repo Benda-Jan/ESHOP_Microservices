@@ -3,13 +3,8 @@ using MediatR;
 
 namespace Catalog.API.Write.Commands;
 
-public class CreateBrandCommand : IRequest<CatalogBrand?>
+public class CreateBrandCommand(string name) : IRequest<CatalogBrand?>
 {
-    public string Name { get; }
-
-    public CreateBrandCommand(string name)
-    {
-        Name = name;
-    }
+    public string Name { get; } = name;
 }
 

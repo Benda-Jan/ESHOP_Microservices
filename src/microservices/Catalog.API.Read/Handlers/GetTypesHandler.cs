@@ -8,14 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Read.Handlers;
 
-public class GetTypesHandler : IRequestHandler<GetTypesQuery, CatalogType[]>
+public class GetTypesHandler(CatalogContext catalogContext) : IRequestHandler<GetTypesQuery, CatalogType[]>
 {
-    private readonly CatalogContext _catalogContext;
-
-    public GetTypesHandler(CatalogContext catalogContext)
-    {
-        _catalogContext = catalogContext;
-    }
+    private readonly CatalogContext _catalogContext = catalogContext;
 
     public Task<CatalogType[]> Handle(GetTypesQuery request, CancellationToken cancellationToken)
         => _catalogContext.CatalogTypes.AsNoTracking().ToArrayAsync();

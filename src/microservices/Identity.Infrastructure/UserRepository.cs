@@ -7,18 +7,11 @@ using JwtLibrary;
 
 namespace Identity.Infrastructure;
 
-public class UserRepository : IUserRepository
+public class UserRepository(UserContext userContext, IEncryptor encryptor, IJwtBuilder jwtBuilder) : IUserRepository
 {
-    private readonly UserContext _userContext;
-    private readonly IEncryptor _encryptor;
-    private readonly IJwtBuilder _jwtBuilder;
-
-    public UserRepository(UserContext userContext, IEncryptor encryptor, IJwtBuilder jwtBuilder)
-    {
-        _userContext = userContext;
-        _encryptor = encryptor;
-        _jwtBuilder = jwtBuilder;
-    }
+    private readonly UserContext _userContext = userContext;
+    private readonly IEncryptor _encryptor = encryptor;
+    private readonly IJwtBuilder _jwtBuilder = jwtBuilder;
 
     public Task<User?> FindByEmail(string email)
         => _userContext.Users.SingleOrDefaultAsync(x => x.Email == email);

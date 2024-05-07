@@ -7,14 +7,9 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers
 {
-	public class DeleteTypeCommandHandler : IRequestHandler<DeleteTypeCommand, CatalogType?>
+	public class DeleteTypeCommandHandler(ICatalogRepository catalogRepository) : IRequestHandler<DeleteTypeCommand, CatalogType?>
 	{
-        private readonly ICatalogRepository _catalogRepository;
-
-        public DeleteTypeCommandHandler(ICatalogRepository catalogRepository)
-        {
-            _catalogRepository = catalogRepository;
-        }
+        private readonly ICatalogRepository _catalogRepository = catalogRepository;
 
         public Task<CatalogType?> Handle(DeleteTypeCommand request, CancellationToken cancellationToken)
             => _catalogRepository.RemoveType(request.Name);

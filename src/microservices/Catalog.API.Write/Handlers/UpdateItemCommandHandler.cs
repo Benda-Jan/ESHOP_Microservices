@@ -7,16 +7,10 @@ using Catalog.Entities.DbSet;
 
 namespace Catalog.API.Handlers
 {
-	public class UpdateItemCommandHandler : IRequestHandler<UpdateItemCommand, CatalogItem?>
+	public class UpdateItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemUpdated eventBusPublisher) : IRequestHandler<UpdateItemCommand, CatalogItem?>
 	{
-        private readonly ICatalogRepository _catalogRepository;
-        private readonly EventBusCatalogItemUpdated _eventBusPublisher;
-
-        public UpdateItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemUpdated eventBusPublisher)
-        {
-            _catalogRepository = catalogRepository;
-            _eventBusPublisher = eventBusPublisher;
-        }
+        private readonly ICatalogRepository _catalogRepository = catalogRepository;
+        private readonly EventBusCatalogItemUpdated _eventBusPublisher = eventBusPublisher;
 
         public async Task<CatalogItem?> Handle(UpdateItemCommand request, CancellationToken cancellationToken)
         {

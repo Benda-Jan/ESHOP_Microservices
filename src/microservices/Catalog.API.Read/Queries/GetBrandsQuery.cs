@@ -7,8 +7,5 @@ namespace Catalog.API.Read.Queries;
 
 public class GetBrandsQuery : IRequest<CatalogBrand[]>
 {
-    public GetBrandsQuery()
-    {
-    }
 }
 

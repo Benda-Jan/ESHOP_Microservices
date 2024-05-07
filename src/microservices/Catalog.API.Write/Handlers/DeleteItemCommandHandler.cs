@@ -7,16 +7,10 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers
 {
-	public class DeleteItemCommandHandler : IRequestHandler<DeleteItemCommand, CatalogItem?>
+	public class DeleteItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemDeleted eventBusPublisher) : IRequestHandler<DeleteItemCommand, CatalogItem?>
 	{
-        private readonly ICatalogRepository _catalogRepository;
-        private readonly EventBusCatalogItemDeleted _eventBusPublisher;
-
-        public DeleteItemCommandHandler(ICatalogRepository catalogRepository, EventBusCatalogItemDeleted eventBusPublisher)
-        {
-            _catalogRepository = catalogRepository;
-            _eventBusPublisher = eventBusPublisher;
-        }
+        private readonly ICatalogRepository _catalogRepository = catalogRepository;
+        private readonly EventBusCatalogItemDeleted _eventBusPublisher = eventBusPublisher;
 
         public async Task<CatalogItem?> Handle(DeleteItemCommand request, CancellationToken cancellationToken)
         {

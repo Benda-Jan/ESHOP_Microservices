@@ -5,13 +5,8 @@ using MediatR;
 
 namespace Catalog.API.Write.Commands;
 
-public class DeleteTypeCommand : IRequest<CatalogType?>
+public class DeleteTypeCommand(string name) : IRequest<CatalogType?>
 {
-    public string Name { get; }
-
-    public DeleteTypeCommand(string name)
-    {
-        Name = name;
-    }
+    public string Name { get; } = name;
 }
 

@@ -5,10 +5,6 @@ namespace Payment.API.Services;
 
 public class PaymentService : PaymentManager.PaymentManagerBase
 {
-    public PaymentService()
-    {
-    }
-
     public override Task<PaymentReply> SendPayment(PaymentRequest request, ServerCallContext context)
     {
         

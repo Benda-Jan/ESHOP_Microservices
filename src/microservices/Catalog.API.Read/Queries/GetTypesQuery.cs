@@ -7,8 +7,5 @@ namespace Catalog.API.Read.Queries;
 
 public class GetTypesQuery : IRequest<CatalogType[]>
 {
-    public GetTypesQuery()
-    {
-    }
 }
 

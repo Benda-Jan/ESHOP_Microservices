@@ -5,14 +5,9 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Write.Handlers
 {
-	public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, CatalogBrand?>
+	public class CreateBrandCommandHandler(ICatalogRepository catalogRepository) : IRequestHandler<CreateBrandCommand, CatalogBrand?>
 	{
-        private readonly ICatalogRepository _catalogRepository;
-
-        public CreateBrandCommandHandler(ICatalogRepository catalogRepository)
-        {
-            _catalogRepository = catalogRepository;
-        }
+        private readonly ICatalogRepository _catalogRepository = catalogRepository;
 
         public Task<CatalogBrand?> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
             => _catalogRepository.CreateBrand(request.Name);

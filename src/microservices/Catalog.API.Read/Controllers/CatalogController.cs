@@ -6,14 +6,9 @@ namespace Catalog.API.Read.Controllers;
 
 [ApiController]
 [Route("/v1/[controller]")]
-public class CatalogController : Controller
+public class CatalogController(IMediator mediator) : Controller
 {
-    private readonly IMediator _mediator;
-
-    public CatalogController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet]
     [Route("items")]

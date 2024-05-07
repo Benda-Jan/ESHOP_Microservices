@@ -5,17 +5,10 @@ using MediatR;
 
 namespace Catalog.API.Read.Queries;
 
-public class GetItemsWithTypeQuery : IRequest<PaginatedItemsViewModel<CatalogItem>>
+public class GetItemsWithTypeQuery(string typeName, int pageSize, int pageIndex) : IRequest<PaginatedItemsViewModel<CatalogItem>>
 {
-    public string TypeName { get; }
-    public int PageSize { get; }
-    public int PageIndex { get; }
-
-    public GetItemsWithTypeQuery(string typeName, int pageSize, int pageIndex)
-    {
-        TypeName = typeName;
-        PageSize = pageSize;
-        PageIndex = pageIndex;
-    }
+    public string TypeName { get; } = typeName;
+    public int PageSize { get; } = pageSize;
+    public int PageIndex { get; } = pageIndex;
 }
 

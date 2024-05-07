@@ -5,14 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Infrastructure.Data;
 
-public class CatalogContextSeeder
+public class CatalogContextSeeder(CatalogContext context)
 {
-	private readonly CatalogContext _context;
-
-    public CatalogContextSeeder(CatalogContext context)
-    {
-        _context = context;
-    }
+	private readonly CatalogContext _context = context;
 
     public async Task SeedBrands()
     {

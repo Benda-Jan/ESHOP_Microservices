@@ -2,15 +2,10 @@
 
 namespace EventBus.Structures;
 
-public abstract class EventBusClient : IDisposable
+public abstract class EventBusClient(string exchangeName) : IDisposable
 {
     protected IModel? _channel;
-    protected string _exchangeName;
-
-    protected EventBusClient(string exchangeName)
-    {
-       _exchangeName = exchangeName;
-    }
+    protected string _exchangeName = exchangeName;
 
     protected void Initialize(string hostName, string userName, string password, int port)
     {

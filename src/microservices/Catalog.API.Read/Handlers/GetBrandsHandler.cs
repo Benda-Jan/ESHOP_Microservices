@@ -6,14 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Read.Handlers;
 
-public class GetBrandsHandler : IRequestHandler<GetBrandsQuery, CatalogBrand[]>
+public class GetBrandsHandler(CatalogContext catalogContext) : IRequestHandler<GetBrandsQuery, CatalogBrand[]>
 {
-    private readonly CatalogContext _catalogContext;
-
-    public GetBrandsHandler(CatalogContext catalogContext)
-    {
-        _catalogContext = catalogContext;
-    }
+    private readonly CatalogContext _catalogContext = catalogContext;
 
     public Task<CatalogBrand[]> Handle(GetBrandsQuery request, CancellationToken cancellationToken)
         => _catalogContext.CatalogBrands.AsNoTracking().ToArrayAsync();

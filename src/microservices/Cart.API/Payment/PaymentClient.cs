@@ -6,17 +6,10 @@ using static Payment.API.PaymentManager;
 
 namespace Cart.API.Payment;
 
-public class PaymentClient : IPaymentClient
+public class PaymentClient(string connection, ICartRepository cartRepository) : IPaymentClient
 {   
-    private readonly ICartRepository _cartRepository;
-    private readonly PaymentManagerClient _paymentManagerClient;
-
-    public PaymentClient(string connection, ICartRepository cartRepository)
-    {   
-        _cartRepository = cartRepository;
-        var channel = GrpcChannel.ForAddress(connection);
-        _paymentManagerClient = new PaymentManagerClient(channel);
-    }
+    private readonly ICartRepository _cartRepository = cartRepository;
+    private readonly PaymentManagerClient _paymentManagerClient = new PaymentManagerClient(GrpcChannel.ForAddress(connection));
 
     public async Task<string> SendPayment(string userId)
     {

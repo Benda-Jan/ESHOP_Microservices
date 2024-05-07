@@ -8,14 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JwtLibrary;
 
-public class JwtBuilder : IJwtBuilder
+public class JwtBuilder(IOptions<JwtOptions> jwtOptions) : IJwtBuilder
 {
-    private readonly JwtOptions _jwtOptions;
-
-    public JwtBuilder(IOptions<JwtOptions> jwtOptions)
-    {
-        _jwtOptions = jwtOptions.Value;
-    }
+    private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
     public string GetToken(string userId)
     {

@@ -6,15 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cart.Infrastructure;
 
-public class CartRepository : ICartRepository
+public class CartRepository(CartContext cartContext) : ICartRepository
 {
-    private readonly CartContext _cartContext;
-
-	public CartRepository(CartContext cartContext)
-	{
-        _cartContext = cartContext;
-	}
-
+    private readonly CartContext _cartContext = cartContext;
+    
     public async Task<IEnumerable<CartItem>?> GetCartItems(string userId)
         => await _cartContext.UserCarts
             .AsNoTracking()

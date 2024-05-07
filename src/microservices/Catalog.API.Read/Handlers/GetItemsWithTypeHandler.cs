@@ -6,14 +6,9 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Read.Handlers;
 
-public class GetItemsWithTypeHandler : IRequestHandler<GetItemsWithTypeQuery, PaginatedItemsViewModel<CatalogItem>>
+public class GetItemsWithTypeHandler(ICatalogRepository catalogRepository) : IRequestHandler<GetItemsWithTypeQuery, PaginatedItemsViewModel<CatalogItem>>
 {
-    private readonly ICatalogRepository _catalogRepository;
-
-    public GetItemsWithTypeHandler(ICatalogRepository catalogRepository)
-    {
-        _catalogRepository = catalogRepository;
-    }
+    private readonly ICatalogRepository _catalogRepository = catalogRepository;
 
     public async Task<PaginatedItemsViewModel<CatalogItem>> Handle(GetItemsWithTypeQuery request, CancellationToken cancellationToken)
     {

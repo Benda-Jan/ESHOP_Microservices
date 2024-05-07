@@ -7,15 +7,10 @@ using Catalog.Infrastructure;
 
 namespace Catalog.API.Handlers
 {
-	public class DeleteBrandCommandHandler : IRequestHandler<DeleteBrandCommand, CatalogBrand?>
+	public class DeleteBrandCommandHandler(ICatalogRepository catalogRepository) : IRequestHandler<DeleteBrandCommand, CatalogBrand?>
 	{
-        private readonly ICatalogRepository _catalogRepository;
-
-        public DeleteBrandCommandHandler(ICatalogRepository catalogRepository)
-        {
-            _catalogRepository = catalogRepository;
-        }
-
+        private readonly ICatalogRepository _catalogRepository = catalogRepository;
+        
         public Task<CatalogBrand?> Handle(DeleteBrandCommand request, CancellationToken cancellationToken)
             => _catalogRepository.RemoveBrand(request.Name);
     }

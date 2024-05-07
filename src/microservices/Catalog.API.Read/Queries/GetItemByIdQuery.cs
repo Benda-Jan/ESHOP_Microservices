@@ -4,13 +4,8 @@ using MediatR;
 
 namespace Catalog.API.Read.Queries;
 
-public class GetItemByIdQuery : IRequest<CatalogItem?>
+public class GetItemByIdQuery(string id) : IRequest<CatalogItem?>
 {
-    public string Id { get; }
-
-    public GetItemByIdQuery(string id)
-    {
-        Id = id;
-    }
+    public string Id { get; } = id;
 }
 
