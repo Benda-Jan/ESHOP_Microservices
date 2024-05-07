@@ -15,7 +15,6 @@ public class ItemDeletedConsumer : EventBusConsumer, IHostedService
         : base("Exchange.CatalogItemDeleted", hostname, username, password, port)
     {
         _cartRepository = cartRepository;
-        
     }
 
     public Task StartAsync(CancellationToken cancellationToken)

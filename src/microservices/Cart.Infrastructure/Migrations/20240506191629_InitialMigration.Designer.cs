@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Cart.Infrastructure.Migrations
 {
     [DbContext(typeof(CartContext))]
-    [Migration("20240419150917_UserCartsUpdatedMigrationAgain")]
-    partial class UserCartsUpdatedMigrationAgain
+    [Migration("20240506191629_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,10 @@ namespace Cart.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserCartId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

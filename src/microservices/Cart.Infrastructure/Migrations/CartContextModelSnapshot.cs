@@ -43,6 +43,10 @@ namespace Cart.Infrastructure.Migrations
                     b.Property<string>("UserCartId")
                         .HasColumnType("text");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserCartId");
